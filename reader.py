@@ -5,6 +5,8 @@ import rti.connextdds as dds
 import rti.idl as idl
 import constants as const
 from profiles import ProfilesExample
+from loguru import logger
+
 
 # todo: CHECK how project pack
 class ProfilesExampleSubscriber:
@@ -33,9 +35,9 @@ class ProfilesExampleSubscriber:
             qos_provider.topic_qos,
         )
 
-        # Create a DataReader with the QoS profile "transient_local_profile",
-        # which is in the QoS library "profiles_Library".
-        self.reader_transient_local = dds.DataReader(
+        # Create a DataReader with the QoS profile "Default",
+        # which is in the QoS library "Barak_Library".
+        self.reader_default = dds.DataReader(
             self.subscriber,
             self.topic,
             qos_provider.datareader_qos_from_profile(
@@ -48,8 +50,8 @@ class ProfilesExampleSubscriber:
     def execute_subscribe_event(self, *args, **kwargs):
         return self.subscribe_event(*args, **kwargs)
 
-    async def run(self, sample_count: int, reader, ): #TODO: change the name and run start the TH
-        async for data in reader.take_data_async():
+    async def run(self, sample_count: int):  # TODO: change the name and run start the TH
+        async for data in self.reader_default.take_data_async():
             self.execute_subscribe_event(data)
             # TODO: loguru
             self.samples_read += 1
@@ -57,9 +59,12 @@ class ProfilesExampleSubscriber:
                 break
 
 
-
 if __name__ == "__main__":
+    def test_event(data):
+        print(f"check the data:  {str(data)}")
+
     try:
-        rti.asyncio.run(ProfilesExampleSubscriber().run(sys.maxsize))
+        subscriber = ProfilesExampleSubscriber("test!!!!!!!!!", ProfilesExample, test_event)
+        rti.asyncio.run(subscriber.run(sys.maxsize))
     except KeyboardInterrupt:
         pass

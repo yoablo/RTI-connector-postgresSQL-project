@@ -1,7 +1,7 @@
 import os
 import sys
 import asyncio
-from rti import idl
+from rti.idl import struct
 import rti.asyncio
 import rti.connextdds as dds
 import constants as const
@@ -9,7 +9,7 @@ from profiles import ProfilesExample
 
 
 class ProfilesExamplePublisher:
-    def __init__(self,topic_name: str, topic_struct: idl.struct):
+    def __init__(self,topic_name: str, topic_struct: struct):
 
 
         # Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
@@ -31,9 +31,9 @@ class ProfilesExamplePublisher:
             qos_provider.topic_qos,
         )
 
-        # Create a DataWriter with the QoS profile "transient_local_profile",
-        # from QoS library "profiles_Library".
-        self.writer_transient_local = dds.DataWriter(
+        # Create a DataWriter with the QoS profile "Default",
+        # from QoS library "Barak_Library".
+        self.writer_default = dds.DataWriter(
             publisher,
             topic,
             qos_provider.datawriter_qos_from_profile(
@@ -49,14 +49,10 @@ class ProfilesExamplePublisher:
             # Update the counter value of the sample.
             sample.x = self.samples_written
 
-            sample.profile_name = "volatile_profile"
+            # Send the sample using the DataWriter with "Default" durability.
+            sample.profile_name = "Default"
             print(f"* Writing {sample}")
-            self.writer_volatile.write(sample)
-
-            # Send the sample using the DataWriter with "transient_local" durability.
-            sample.profile_name = "transient_local_profile"
-            print(f"* Writing {sample}")
-            self.writer_transient_local.write(sample)
+            self.writer_default.write(sample)
 
             self.samples_written += 1
             await asyncio.sleep(1)
@@ -64,6 +60,6 @@ class ProfilesExamplePublisher:
 
 if __name__ == "__main__":
     try:
-        rti.asyncio.run(ProfilesExamplePublisher(0).run(sys.maxsize))
+        rti.asyncio.run(ProfilesExamplePublisher("test!!!!!!!!!", ProfilesExample).run(sys.maxsize))
     except KeyboardInterrupt:
         pass
