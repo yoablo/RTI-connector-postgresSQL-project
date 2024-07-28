@@ -39,8 +39,7 @@ class VideoPosition:
         'DDS_sampleInfo': [MiscellaneousEnum.DDS_SAMPLE_INFO]
     }
 )
-class DetectionOptronics(Detection):  # TODO: ask if changing the name will make problems
-    # TODO: ask how to put the normal detection inside this class
+class DetectionOptronics(Detection):
     A_opticalErrorRadius: float = 0.0
     A_absoluteDirectionAvailable: bool = False
     A_sensorLOS: SensorLOS = SensorLOS()

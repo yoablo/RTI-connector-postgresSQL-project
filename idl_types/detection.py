@@ -197,7 +197,7 @@ class SourceLocation:
     }
 )
 class DescriptiveParameters:
-    # A_recognizingDetectorTypes: Sequence[types.char] = field(default_factory=idl.array_factory(types.char))
+    A_recognizingDetectorTypes: Sequence[types.char] = field(default_factory=idl.array_factory(types.char))
     A_recognizingDetectorTypes_ItemsCount: idl.uint32 = 0
     A_classificationAvailable: bool = False
     A_objectClassification: Sequence[types.char] = field(default_factory=idl.array_factory(types.char))
