@@ -1,4 +1,3 @@
-import os
 import sys
 import asyncio
 from rti.idl import struct
@@ -6,11 +5,11 @@ import rti.asyncio
 import rti.connextdds as dds
 import constants as const
 from profiles import ProfilesExample
+import idl_types.detection_optronics
 
 
 class ProfilesExamplePublisher:
-    def __init__(self,topic_name: str, topic_struct: struct):
-
+    def __init__(self, topic_name: str, topic_struct: struct):
 
         # Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
         qos_provider = dds.QosProvider(const.QOS_PROVIDER)
@@ -37,7 +36,7 @@ class ProfilesExamplePublisher:
             publisher,
             topic,
             qos_provider.datawriter_qos_from_profile(
-               const.PROFILE_NAME
+                const.PROFILE_NAME
             ),
         )
 
@@ -46,6 +45,7 @@ class ProfilesExamplePublisher:
     async def run(self, sample_count: int):
         sample = ProfilesExample()
         while self.samples_written < sample_count:
+            continue
             # Update the counter value of the sample.
             sample.x = self.samples_written
 
@@ -60,6 +60,8 @@ class ProfilesExamplePublisher:
 
 if __name__ == "__main__":
     try:
-        rti.asyncio.run(ProfilesExamplePublisher("test!!!!!!!!!", ProfilesExample).run(sys.maxsize))
+        # rti.asyncio.run(ProfilesExamplePublisher("test!!!!!!!!!", ProfilesExample).run(sys.maxsize))
+        rti.asyncio.run(ProfilesExamplePublisher("test2", idl_types.detection_optronics.DetectionOptronics).run(sys.maxsize))
+
     except KeyboardInterrupt:
         pass

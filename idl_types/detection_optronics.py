@@ -4,8 +4,9 @@ from typing import Sequence
 import rti.idl as idl
 import rti.types as types
 
-from miscellaneousEnum import MiscellaneousEnum
-from detection import Detection
+from idl_types.miscellaneousEnum import MiscellaneousEnum
+from idl_types.detection import Detection
+
 
 @idl.struct
 class SensorLOS:
@@ -50,6 +51,3 @@ class DetectionOptronics(Detection):
     A_detectionSizeOnVideo: VideoPosition = VideoPosition()
     A_detectionVideoAccuracy: VideoPosition = VideoPosition()
     DDS_sampleInfo: Sequence[types.char] = field(default_factory=idl.array_factory(types.char))
-
-
-x = DetectionOptronics

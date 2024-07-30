@@ -1,9 +1,9 @@
 from dataclasses import field
+from typing import Sequence
 
 import rti.idl as idl
 import rti.types as types
-from typing import Sequence
-from miscellaneousEnum import *
+from idl_types.miscellaneousEnum import MiscellaneousEnum
 
 
 @idl.struct
@@ -229,18 +229,21 @@ class DetectingMethod:
 
 @idl.struct(
     member_annotations={
-        'A_detectionClassification': [MiscellaneousEnum.VERY_SHORT_STRING],
+        'A_sourceID': [idl.key],
+        'A_detectionUniqueID': [idl.key],
+        'A_detectionClassification': [MiscellaneousEnum.SHORT_STRING],
         'A_method': [MiscellaneousEnum.METHODS_COUNT],
         'A_designatedInfo': [MiscellaneousEnum.VERY_SHORT_STRING],
         'A_detectionMethods': [MiscellaneousEnum.DETECTION_METHODS]
     }
 )
 class Detection:
+    test: int = 0
     A_sourceID: SourceId = SourceId()
     A_timeOfDataGeneration: TimeOfDataGeneration = TimeOfDataGeneration()
     A_detectionUniqueID: DetectionUniqueID = DetectionUniqueID()
     A_confidence: float = 0.0
-    A_detectionClassification: Sequence[types.char] = field(default_factory=idl.array_factory(types.char))
+    A_detectionClassification: Sequence[types.char] = field(default_factory=idl.array_factory(types.char, 20))
     A_detectionClassScore: float = 0.0
     A_detectionForceType: idl.int32 = 0
     A_detectionThreatStatus: idl.int32 = 0
