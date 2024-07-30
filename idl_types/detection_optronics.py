@@ -37,7 +37,7 @@ class VideoPosition:
 
 @idl.struct(
     member_annotations={
-        'DDS_sampleInfo': [MiscellaneousEnum.DDS_SAMPLE_INFO]
+        'DDS_sampleInfo': [idl.bound(MiscellaneousEnum.DDS_SAMPLE_INFO)]
     }
 )
 class DetectionOptronics(Detection):

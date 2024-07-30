@@ -68,7 +68,7 @@ if __name__ == "__main__":
         # subscriber = ProfilesExampleSubscriber("test!!!!!!!!!", ProfilesExample, test_event)
         # rti.asyncio.run(subscriber.run(sys.maxsize))
 
-        subscriber = ProfilesExampleSubscriber("test2", idl_types.detection_optronics.DetectionOptronics, test_event)
+        subscriber = ProfilesExampleSubscriber("test3", idl_types.detection_optronics.DetectionOptronics, test_event)
         rti.asyncio.run(subscriber.run(sys.maxsize))
 
         # subscriber = ProfilesExampleSubscriber("P_Tactical_Sensor_PSM::C_Detection_Optronics", idl_types.detection_optronics.DetectionOptronics, test_event)

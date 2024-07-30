@@ -61,7 +61,7 @@ class ProfilesExamplePublisher:
 if __name__ == "__main__":
     try:
         # rti.asyncio.run(ProfilesExamplePublisher("test!!!!!!!!!", ProfilesExample).run(sys.maxsize))
-        rti.asyncio.run(ProfilesExamplePublisher("test2", idl_types.detection_optronics.DetectionOptronics).run(sys.maxsize))
+        rti.asyncio.run(ProfilesExamplePublisher("test3", idl_types.detection_optronics.DetectionOptronics).run(sys.maxsize))
 
     except KeyboardInterrupt:
         pass
