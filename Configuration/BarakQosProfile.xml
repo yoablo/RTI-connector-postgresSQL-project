@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="C:\Program Files\rti_connext_dds-6.1.1\resource\schema\rti_dds_qos_profiles.xsd"
-     version="6.1.1">
+     xsi:noNamespaceSchemaLocation="C:\Program Files\rti_connext_dds-7.3.0\resource\schema\rti_dds_qos_profiles.xsd"
+     version="7.3.0">
 
 	<!--BARAK QOS Version 1.0.0.19 -->
 
@@ -63,7 +63,7 @@
 						</element>
 						<element>
 							<name>dds.transport.UDPv4.builtin.parent.message_size_max</name>
-							<value>1400</value>
+							<value>65507</value>
 							<!-- 65530 -->
 						</element>
 						<element>

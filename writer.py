@@ -4,8 +4,7 @@ from rti.idl import struct
 import rti.asyncio
 import rti.connextdds as dds
 import constants as const
-from profiles import ProfilesExample
-import idl_types.detection_optronics
+from auto_idl_types.DetectionOptronics import P_Tactical_Sensor_PSM_C_Detection_Optronics
 
 
 class ProfilesExamplePublisher:
@@ -43,14 +42,10 @@ class ProfilesExamplePublisher:
         self.samples_written = 0
 
     async def run(self, sample_count: int):
-        sample = ProfilesExample()
+        sample = P_Tactical_Sensor_PSM_C_Detection_Optronics()
         while self.samples_written < sample_count:
-            continue
-            # Update the counter value of the sample.
-            sample.x = self.samples_written
-
             # Send the sample using the DataWriter with "Default" durability.
-            sample.profile_name = "Default"
+            sample.A_confidence = 2.2
             print(f"* Writing {sample}")
             self.writer_default.write(sample)
 
@@ -61,7 +56,8 @@ class ProfilesExamplePublisher:
 if __name__ == "__main__":
     try:
         # rti.asyncio.run(ProfilesExamplePublisher("test!!!!!!!!!", ProfilesExample).run(sys.maxsize))
-        rti.asyncio.run(ProfilesExamplePublisher("test3", idl_types.detection_optronics.DetectionOptronics).run(sys.maxsize))
+        rti.asyncio.run(ProfilesExamplePublisher("P_Tactical_Sensor_PSM::C_Detection_Optronics",
+                                                 P_Tactical_Sensor_PSM_C_Detection_Optronics).run(sys.maxsize))
 
     except KeyboardInterrupt:
         pass

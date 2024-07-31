@@ -58,7 +58,8 @@ class DetectionStatus(IntEnum):
     L_DetectionState_DELETED = 3,
     L_DetectionState_CANCELED = 4,
     L_DetectionState_MERGED = 5,
-    L_DetectionState_SPLIT = 6
+    L_DetectionState_SPLIT = 6,
+    L_DetectionState_DESTROYED = 7
 
 
 @idl.enum
@@ -199,7 +200,7 @@ class PhysicalParameters:
     A_inertialLocationAccuracy: InertialLocationAccuracy = InertialLocationAccuracy()
     A_absoluteLocationAvailable: bool = False
     A_absoluteLocation: AbsoluteLocation = AbsoluteLocation()
-    A_absoluteLocationAccuracy: RelativeLocationAccuracy = RelativeLocationAccuracy()
+    A_absoluteLocationAccuracy: AbsoluteLocationAccuracy = AbsoluteLocationAccuracy()
     A_angularVelocityAvailable: bool = False
     A_angularVelocity: AngularVelocity = AngularVelocity()
     A_angularVelocityAccuracy: AngularVelocityAccuracy = AngularVelocityAccuracy()
@@ -261,12 +262,12 @@ class SourceLocation:
 
 @idl.struct(
     member_annotations={
-        'A_recognizingDetectorTypes': [idl.bound(MiscellaneousEnum.VERY_SHORT_STRING * 10)],
+        'A_recognizingDetectorTypes': [idl.bound(20 * 10)],
         'A_objectClassification': [idl.bound(MiscellaneousEnum.SHORT_STRING)]
     }
 )
 class DescriptiveParameters:
-    A_recognizingDetectorTypes: Sequence[types.char] = field(default_factory=idl.array_factory(types.char))
+    A_recognizingDetectorTypes: Sequence[types.char] = field(default_factory=list)
     A_recognizingDetectorTypes_ItemsCount: idl.uint32 = 0
     A_classificationAvailable: bool = False
     A_objectClassification: Sequence[types.char] = field(default_factory=idl.array_factory(types.char))
@@ -318,7 +319,6 @@ class DetectingMethod:
     }
 )
 class Detection:
-    test: int = 0
     A_sourceID: SourceId = SourceId()
     A_timeOfDataGeneration: TimeOfDataGeneration = TimeOfDataGeneration()
     A_detectionUniqueID: DetectionUniqueID = DetectionUniqueID()
@@ -334,7 +334,7 @@ class Detection:
     A_priority: idl.int16 = 0
     A_trajectoryType: TrajectoryType = 0
     A_method: Sequence[SensingMethod] = field(default_factory=list)
-    A_method_ItemsCount: idl.uint32 = 0
+    #A_method_ItemsCount: idl.uint32 = 0 #missing in the rti
     A_spatialParametersAvailable: bool = False
     A_spatialInfo: SpatialInfo = SpatialInfo()
     A_suspensionCause: SuspensionCause = 0
