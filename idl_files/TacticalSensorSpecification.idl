@@ -1,0 +1,54 @@
+module P_LDM_Common {
+    typedef long T_Int32;
+
+    typedef short T_Int16;
+
+    struct T_Identifier {
+        T_Int32 A_platformId;    //@ID 193125732
+        T_Int16 A_systemId;    //@ID 226945837
+        T_Int16 A_moduleId;    //@ID 98483598
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    typedef long long T_Int64;
+
+    struct T_DateTime {
+        T_Int64 A_seconds;    //@ID 47523875
+        T_Int32 A_nanoseconds;    //@ID 168751860
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    typedef char T_Char;
+
+    typedef sequence<P_LDM_Common::T_Char,20> T_ShortString;
+
+    typedef T_ShortString T_Descriptor;
+
+    typedef boolean T_Boolean;
+
+}; // end of 'P_LDM_Common' module
+
+module P_Tactical_Sensor_PSM {
+    struct C_Tactical_Sensor_Specification {
+        P_LDM_Common::T_Identifier A_sourceID; //@key
+    //@ID 118386796
+        P_LDM_Common::T_DateTime A_timeOfDataGeneration;    //@ID 234062147
+        sequence<P_LDM_Common::T_Descriptor,10> A_detectorTypesSupport; //@Optional
+    //@ID 12414556
+        sequence<P_LDM_Common::T_Descriptor,50> A_detectingClassSupport; //@Optional
+    //@ID 171675280
+        P_LDM_Common::T_Boolean A_rangeSupport;    //@ID 8397463
+        P_LDM_Common::T_Boolean A_detectionSizeSupport;    //@ID 83890616
+        P_LDM_Common::T_Boolean A_accuracySupport;    //@ID 114850561
+        P_LDM_Common::T_Boolean A_detectionThreatLevelSupport;    //@ID 79787413
+        P_LDM_Common::T_Boolean A_setDetectorStateSupport;    //@ID 5997863
+        P_LDM_Common::T_Boolean A_videoDetectorSupport;    //@ID 203143827
+        P_LDM_Common::T_Boolean A_snapshotSupport;    //@ID 126899836
+        P_LDM_Common::T_Boolean A_rfSupport;    //@ID 234081465
+        P_LDM_Common::T_Int16 A_maxNumberOfDetectionLocations;    //@ID 192960657
+        P_LDM_Common::T_Boolean A_inertialLocationSupport;    //@ID 176554836
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_Tactical_Sensor_PSM' module
+

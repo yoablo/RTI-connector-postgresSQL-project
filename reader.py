@@ -4,6 +4,9 @@ import rti.connextdds as dds
 import rti.idl as idl
 import constants as const
 from auto_idl_types.DetectionOptronics import P_Tactical_Sensor_PSM_C_Detection_Optronics
+from auto_idl_types.DetectionAps import P_Tactical_Sensor_PSM_C_Detection_Aps
+from auto_idl_types.Position import P_Navigation_PSM_C_Position
+from Configuration.TopicData import structEnum, topic_data_dict
 
 
 # todo: CHECK how project pack
@@ -62,14 +65,9 @@ if __name__ == "__main__":
         print(f"check the data:  {str(data)}")
 
     try:
-        # subscriber = ProfilesExampleSubscriber("test!!!!!!!!!", ProfilesExample2, test_event)
-        # rti.asyncio.run(subscriber.run(sys.maxsize))
+        struct = structEnum.Detection_Optronics
+        subscriber = ProfilesExampleSubscriber(topic_data_dict[struct].topic_name, topic_data_dict[struct].struct_type, test_event)
 
-        subscriber = ProfilesExampleSubscriber("P_Tactical_Sensor_PSM::C_Detection_Optronics",
-                                               P_Tactical_Sensor_PSM_C_Detection_Optronics, test_event)
         rti.asyncio.run(subscriber.run(sys.maxsize))
-
-        # subscriber = ProfilesExampleSubscriber("P_Tactical_Sensor_PSM::C_Detection_Optronics", idl_types.detection_optronics.DetectionOptronics, test_event)
-        # rti.asyncio.run(subscriber.run(sys.maxsize))
     except KeyboardInterrupt:
         pass

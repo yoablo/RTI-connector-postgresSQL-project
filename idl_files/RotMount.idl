@@ -1,0 +1,126 @@
+module P_LDM_Common {
+    typedef long T_Int32;
+
+    typedef short T_Int16;
+
+    struct T_Identifier {
+        T_Int32 A_platformId;    //@ID 193125732
+        T_Int16 A_systemId;    //@ID 226945837
+        T_Int16 A_moduleId;    //@ID 98483598
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    typedef long long T_Int64;
+
+    struct T_DateTime {
+        T_Int64 A_seconds;    //@ID 47523875
+        T_Int32 A_nanoseconds;    //@ID 168751860
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    typedef double T_Double;
+
+    typedef T_Double T_AngleInRadians;
+
+    struct T_RotationalPosition {
+        T_AngleInRadians A_azimuth;    //@ID 132319399
+        T_AngleInRadians A_azimuthAccuracy;    //@ID 90381994
+        T_AngleInRadians A_elevation;    //@ID 185059946
+        T_AngleInRadians A_elevationAccuracy;    //@ID 5936303
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    typedef T_Double T_DistanceInMeters;
+
+    typedef T_DistanceInMeters T_Altitude;
+
+    typedef T_AngleInRadians T_Latitude;
+
+    typedef T_AngleInRadians T_Longitude;
+
+    struct T_Coordinate3D {
+        T_Altitude A_altitude;    //@ID 143806669
+        T_Latitude A_latitude;    //@ID 252288645
+        T_Longitude A_longitude;    //@ID 249776067
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_LDM_Common' module
+
+module P_Mount_PSM {
+    enum T_ProcessState {
+        @default_literal
+        L_ProcessState_OFF = 0,
+        L_ProcessState_IN_PROGRESS = 1,
+        L_ProcessState_COMPLETED = 2,
+        L_ProcessState_FAILED = 3
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+    enum T_EnslavementMode {
+        @default_literal
+        L_EnslavementMode_INDEPENDENT = 0,
+        L_EnslavementMode_ENSLAVED = 1,
+        L_EnslavementMode_MECHANICAL = 2
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+    enum T_MountWorkMode {
+        @default_literal
+        L_MountWorkMode_INIT = 0,
+        L_MountWorkMode_OPER = 1,
+        L_MountWorkMode_MAINT = 2
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+}; // end of 'P_Mount_PSM' module
+
+module P_LDM_Common {
+    enum T_OnOff {
+        @default_literal
+        L_OnOff_ON = 0,
+        L_OnOff_OFF = 1
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+}; // end of 'P_LDM_Common' module
+
+module P_Mount_PSM {
+    enum T_StabilizationMode {
+        @default_literal
+        L_StabilizationMode_MANUAL = 0,
+        L_StabilizationMode_POWER = 1,
+        L_StabilizationMode_STABILIZATION = 2
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+}; // end of 'P_Mount_PSM' module
+
+module P_LDM_Common {
+    typedef boolean T_Boolean;
+
+}; // end of 'P_LDM_Common' module
+
+module P_Mount_PSM {
+    struct C_Rot_Mount {
+        P_LDM_Common::T_Identifier A_sourceID; //@key
+    //@ID 118386796
+        P_LDM_Common::T_DateTime A_timeOfDataGeneration;    //@ID 234062147
+        P_LDM_Common::T_RotationalPosition A_mountPosition;    //@ID 87554151
+        P_LDM_Common::T_Coordinate3D A_absolutePosition;    //@ID 16428286
+        P_LDM_Common::T_AngleInRadians A_attitudeToNorthPosition;    //@ID 77955496
+        T_ProcessState A_scanState;    //@ID 231740354
+        T_ProcessState A_bringToState;    //@ID 82168132
+        P_LDM_Common::T_RotationalPosition A_bringToPreset;    //@ID 164285904
+        T_EnslavementMode A_enslavementMode;    //@ID 125824979
+        P_LDM_Common::T_Identifier A_enslavedTo;    //@ID 56539008
+        T_MountWorkMode A_workMode;    //@ID 177658374
+        P_LDM_Common::T_OnOff A_lmcState;    //@ID 93868992
+        T_StabilizationMode A_stabilizationState;    //@ID 7339653
+        P_LDM_Common::T_Boolean A_inMovementInhibitZone;    //@ID 259448016
+        P_LDM_Common::T_Boolean A_traverseMode;    //@ID 69652467
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_Mount_PSM' module
+
