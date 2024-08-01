@@ -1,43 +1,32 @@
-import sys
+from builtins import function
+from sys import maxsize
 import rti.asyncio
 import rti.connextdds as dds
-import rti.idl as idl
+from loguru import logger
+
+
 import constants as const
-from auto_idl_types.DetectionOptronics import P_Tactical_Sensor_PSM_C_Detection_Optronics
-from auto_idl_types.DetectionAps import P_Tactical_Sensor_PSM_C_Detection_Aps
-from auto_idl_types.Position import P_Navigation_PSM_C_Position
-from Configuration.TopicData import structEnum, topic_data_dict
+from Configuration.TopicData import StructEnum, topic_data_dict
 
 
-# todo: CHECK how project pack
 class ProfilesExampleSubscriber:
-    def __init__(self, topic_name: str, topic_struct: idl.struct, subscribe_event):
+    def __init__(self, struct_enum: StructEnum, subscribe_event):
+        topic_name = topic_data_dict[struct_enum].topic_name
+        topic_struct = topic_data_dict[struct_enum].topic_struct
 
-        self.subscribe_event = subscribe_event
-
-        # Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
         qos_provider = dds.QosProvider(const.QOS_PROVIDER)
-
-        # Create a DomainParticipant with the default QoS of the provider.
         self.participant = dds.DomainParticipant(
             int(const.DOMAIN_ID), qos_provider.participant_qos
         )
-
-        # Create a Subscriber with default QoS.
         self.subscriber = dds.Subscriber(
             self.participant, qos_provider.subscriber_qos
         )
-
-        # Create a Topic with default QoS.
         self.topic = dds.Topic(
             self.participant,
             topic_name,
             topic_struct,
             qos_provider.topic_qos,
         )
-
-        # Create a DataReader with the QoS profile "Default",
-        # which is in the QoS library "Barak_Library".
         self.reader_default = dds.DataReader(
             self.subscriber,
             self.topic,
@@ -45,29 +34,25 @@ class ProfilesExampleSubscriber:
                 const.PROFILE_NAME
             ),
         )
-
+        self.subscribe_event = subscribe_event
         self.samples_read = 0
 
     def execute_subscribe_event(self, *args, **kwargs):
         return self.subscribe_event(*args, **kwargs)
 
-    async def run(self, sample_count: int):  # TODO: change the name and run start the TH
+    async def run(self, sample_count: int):
+
         async for data in self.reader_default.take_data_async():
             self.execute_subscribe_event(data)
-            # TODO: loguru
+            logger.trace(f'{data}')
             self.samples_read += 1
             if self.samples_read >= sample_count:
                 break
 
 
-if __name__ == "__main__":
-    def test_event(data):
-        print(f"check the data:  {str(data)}")
-
+def run(struct_enum: StructEnum, subscribe_event: function):
     try:
-        struct = structEnum.Detection_Optronics
-        subscriber = ProfilesExampleSubscriber(topic_data_dict[struct].topic_name, topic_data_dict[struct].struct_type, test_event)
-
-        rti.asyncio.run(subscriber.run(sys.maxsize))
+        subscriber = ProfilesExampleSubscriber(struct_enum, subscribe_event)
+        rti.asyncio.run(subscriber.run(maxsize))
     except KeyboardInterrupt:
         pass

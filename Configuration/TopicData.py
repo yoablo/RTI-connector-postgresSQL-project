@@ -10,38 +10,38 @@ from auto_idl_types.TacticalSensor import P_Tactical_Sensor_PSM_C_Tactical_Senso
 from auto_idl_types.TacticalSensorSpecification import P_Tactical_Sensor_PSM_C_Tactical_Sensor_Specification
 
 
-class structEnum(Enum):
-    Detection = 0,
-    Detection_Aps = 1,
-    Detection_Optronics = 2,
-    Position = 3,
-    Resource_Specification = 4,
-    Rot_Mount = 5,
-    Tactical_Sensor = 6,
-    Tactical_Sensor_Specification = 7
+class StructEnum(Enum):
+    DETECTION = 0,
+    DETECTION_APS = 1,
+    DETECTION_OPTRONICS = 2,
+    POSITION = 3,
+    RESOURCE_SPECIFICATION = 4,
+    ROT_MOUNT = 5,
+    TACTICAL_SENSOR = 6,
+    TACTICAL_SENSOR_SPECIFICATION = 7
 
 
 class StructData:
-    def __init__(self, topic_name, struct_type):
+    def __init__(self, topic_name, topic_struct):
         self.topic_name = topic_name
-        self.struct_type = struct_type
+        self.topic_struct = topic_struct
 
 
 topic_data_dict = {
-    structEnum.Detection: StructData(
+    StructEnum.DETECTION: StructData(
         "P_Tactical_Sensor_PSM::C_Detection", P_Tactical_Sensor_PSM_C_Detection),
-    structEnum.Detection_Aps: StructData(
+    StructEnum.DETECTION_APS: StructData(
         "P_Tactical_Sensor_PSM::C_Detection_Aps", P_Tactical_Sensor_PSM_C_Detection_Aps),
-    structEnum.Detection_Optronics: StructData(
+    StructEnum.DETECTION_OPTRONICS: StructData(
         "P_Tactical_Sensor_PSM::C_Detection_Optronics", P_Tactical_Sensor_PSM_C_Detection_Optronics),
-    structEnum.Position: StructData(
+    StructEnum.POSITION: StructData(
         "P_Navigation_PSM::C_Position", P_Navigation_PSM_C_Position),
-    structEnum.Resource_Specification: StructData(
+    StructEnum.RESOURCE_SPECIFICATION: StructData(
         "P_Maintenance_PSM::C_Resource_Specification", P_Maintenance_PSM_C_Resource_Specification),
-    structEnum.Rot_Mount: StructData(
+    StructEnum.ROT_MOUNT: StructData(
         "P_Mount_PSM::C_Rot_Mount", P_Mount_PSM_C_Rot_Mount),
-    structEnum.Tactical_Sensor: StructData(
+    StructEnum.TACTICAL_SENSOR: StructData(
         "P_Tactical_Sensor_PSM::C_Tactical_Sensor", P_Tactical_Sensor_PSM_C_Tactical_Sensor),
-    structEnum.Tactical_Sensor_Specification: StructData(
+    StructEnum.TACTICAL_SENSOR_SPECIFICATION: StructData(
         "P_Tactical_Sensor_PSM::C_Tactical_Sensor_Specification", P_Tactical_Sensor_PSM_C_Tactical_Sensor_Specification)
 }
