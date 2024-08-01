@@ -1,0 +1,294 @@
+module P_LDM_Common {
+    struct T_Identifier {
+        long A_platformId;    //@ID 193125732
+        short A_systemId;    //@ID 226945837
+        short A_moduleId;    //@ID 98483598
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    struct T_DateTime {
+        long long A_seconds;    //@ID 47523875
+        long A_nanoseconds;    //@ID 168751860
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    struct T_Uuid {
+        unsigned long long A_msb;    //@ID 21731089
+        unsigned long long A_lsb;    //@ID 16396169
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_LDM_Common' module
+
+module P_Tactical_Sensor_PSM {
+    enum T_IFFCategory {
+        @default_literal
+        L_IFFCategory_UNKNOWN = 0,
+        L_IFFCategory_FRIEND = 1,
+        L_IFFCategory_FOE = 2,
+        L_IFFCategory_UNINVOLVED = 3
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+    enum T_EngagementStatus {
+        @default_literal
+        L_EngagementStatus_UNKNOWN = 0,
+        L_EngagementStatus_NONE = 1,
+        L_EngagementStatus_HANDLED = 2,
+        L_EngagementStatus_DROPPED = 3,
+        L_EngagementStatus_THRETENING = 4
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+    enum T_Interception {
+        @default_literal
+        L_Interception_UNKNOWN = 0,
+        L_Interception_ON = 1,
+        L_Interception_MISSING_OUT = 2
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+    enum T_DetectionState {
+        @default_literal
+        L_DetectionState_NONE = 0,
+        L_DetectionState_VALID_RECOGNIZED = 1,
+        L_DetectionState_VALID_NOT_RECOGNIZED = 2,
+        L_DetectionState_DELETED = 3,
+        L_DetectionState_CANCELED = 4,
+        L_DetectionState_MERGED = 5,
+        L_DetectionState_SPLIT = 6,
+        L_DetectionState_DESTROYED = 7
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+    enum T_DetectionType {
+        @default_literal
+        L_DetectionType_DETECTION = 0,
+        L_DetectionType_THREAT = 1,
+        L_DetectionType_TARGET = 2
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+}; // end of 'P_Tactical_Sensor_PSM' module
+
+module P_LDM_Common {
+    struct T_Duration {
+        unsigned long A_seconds;    //@ID 47523875
+        unsigned long A_nanoseconds;    //@ID 168751860
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_LDM_Common' module
+
+module P_Tactical_Sensor_PSM {
+    enum T_Trajectory {
+        @default_literal
+        L_Trajectory_UNKNOWN = 0,
+        L_Trajectory_SURFACE = 1,
+        L_Trajectory_HORIZON = 2,
+        L_Trajectory_BALISTIC = 3,
+        L_Trajectory_STEEP = 4,
+        L_Trajectory_UNDERNEATH = 5
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+    enum T_Sensing_Method {
+        @default_literal
+        L_Sensing_Method_UNKNOWN = 0,
+        L_Sensing_Method_RF = 1,
+        L_Sensing_Method_OPTIC = 2,
+        L_Sensing_Method_ACOUSTIC = 3,
+        L_Sensing_Method_C4I = 4,
+        L_Sensing_Method_OPERATOR = 5
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+}; // end of 'P_Tactical_Sensor_PSM' module
+
+module P_LDM_Common {
+    struct T_CoordinatePolar3D {
+        double A_elevation;    //@ID 185059946
+        double A_azimuth;    //@ID 132319399
+        double A_range;    //@ID 149142522
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    struct T_Coordinate3D {
+        double A_altitude;    //@ID 143806669
+        double A_latitude;    //@ID 252288645
+        double A_longitude;    //@ID 249776067
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    struct T_Vector_3D {
+        double A_elevation;    //@ID 185059946
+        double A_azimuth;    //@ID 132319399
+        double A_magnitude;    //@ID 178695539
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_LDM_Common' module
+
+module P_Tactical_Sensor_PSM {
+    struct T_Field_Of_View {
+        double A_hfov;    //@ID 219673437
+        double A_vfov;    //@ID 94953845
+        P_LDM_Common::T_CoordinatePolar3D A_fovCenter;    //@ID 86166626
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    struct T_Physical_Parameters {
+        P_LDM_Common::T_CoordinatePolar3D A_relativeLocationsBase;    //@ID 202129906
+        boolean A_sensorInertialLocationAvailable;    //@ID 160154763
+        P_LDM_Common::T_Coordinate3D A_sensorInertialLocation;    //@ID 25381208
+        boolean A_relativeLocationAvailable;    //@ID 247777497
+        boolean A_rangeAvailable;    //@ID 260167579
+        P_LDM_Common::T_CoordinatePolar3D A_relativeLocation;    //@ID 176177253
+        P_LDM_Common::T_CoordinatePolar3D A_relativeLocationAccuracy;    //@ID 256823903
+        boolean A_inertialLocationAvailable;    //@ID 239505011
+        P_LDM_Common::T_CoordinatePolar3D A_inertialLocation;    //@ID 199017188
+        P_LDM_Common::T_CoordinatePolar3D A_inertialLocationAccuracy;    //@ID 151609059
+        boolean A_absoluteLocationAvailable;    //@ID 237173483
+        P_LDM_Common::T_Coordinate3D A_absoluteLocation;    //@ID 126442216
+        P_LDM_Common::T_Coordinate3D A_absoluteLocationAccuracy;    //@ID 29155565
+        boolean A_angularVelocityAvailable;    //@ID 90633880
+        P_LDM_Common::T_Vector_3D A_angularVelocity;    //@ID 41912237
+        P_LDM_Common::T_Vector_3D A_angularVelocityAccuracy;    //@ID 259421538
+        boolean A_linearSpeedAvailable;    //@ID 17206948
+        double A_linearSpeed;    //@ID 79564538
+        P_LDM_Common::T_CoordinatePolar3D A_speedOrientation;    //@ID 105149909
+        double A_linearSpeedAccuracy;    //@ID 140233796
+        boolean A_radialVelocityAvailable;    //@ID 30429412
+        double A_radialVelocity;    //@ID 218586043
+        double A_radialVelocityAccuracy;    //@ID 12645927
+        boolean A_tangentialVelocityAvailable;    //@ID 206873348
+        double A_horizontalTangentialVelocity;    //@ID 195513788
+        double A_horizontalTangentialVelocityError;    //@ID 156366719
+        double A_verticalTangentialVelocity;    //@ID 194277054
+        double A_verticalTangentialVelocityError;    //@ID 201403017
+        boolean A_fieldOfViewAvailable;    //@ID 158004688
+        T_Field_Of_View A_fieldOfView;    //@ID 163011555
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_Tactical_Sensor_PSM' module
+
+module P_LDM_Common {
+    struct T_Dimension {
+        double A_height;    //@ID 126938091
+        double A_length;    //@ID 268122242
+        double A_width;    //@ID 216631209
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    enum T_Value_Source {
+        @default_literal
+        L_Value_Source_UNKNOWN = 0,
+        L_Value_Source_CALCULATED = 1,
+        L_Value_Source_MEASURED = 2,
+        L_Value_Source_REPORTED = 3
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+}; // end of 'P_LDM_Common' module
+
+typedef sequence<char, 20> CharSequence;
+
+module P_Tactical_Sensor_PSM {
+    struct T_Descriptive_Parameters {
+        sequence<CharSequence,10> A_recognizingDetectorTypes;    //@ID 164911381
+        boolean A_classificationAvailable;    //@ID 74505323
+        sequence<char,20> A_objectClassification;    //@ID 186028223
+        double A_classificationConfidence;    //@ID 193401693
+        P_LDM_Common::T_CoordinatePolar3D A_detectionSampleSize;    //@ID 238759197
+        P_LDM_Common::T_Dimension A_absoluteSize;    //@ID 141075497
+        P_LDM_Common::T_Duration A_exposureDuration;    //@ID 40368954
+        P_LDM_Common::T_Value_Source A_rangeMethod;    //@ID 127229930
+        P_LDM_Common::T_Coordinate3D A_sourceLocationAccuracy;    //@ID 9859942
+        P_LDM_Common::T_Coordinate3D A_sourceLocation;    //@ID 121402085
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    struct T_Spatial_Info {
+        T_Physical_Parameters A_physicalInfo;    //@ID 170544614
+        T_Descriptive_Parameters A_descriptiveInfo;    //@ID 219430159
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    enum T_SuspensionCause {
+        @default_literal
+        L_SuspensionCause_NOT_SUSPENDED = 0,
+        L_SuspensionCause_UNKNOWN = 1,
+        L_SuspensionCause_FALSE_DETECTION = 2,
+        L_SuspensionCause_LATE_DETECTION = 3,
+        L_SuspensionCause_IRRELEVANT = 4,
+        L_SuspensionCause_BUSY = 5,
+        L_SuspensionCause_VANISHED = 6,
+        L_SuspensionCause_OPERATOR_DECISION = 7
+    };
+    //@Extensibility EXTENSIBLE_EXTENSIBILITY
+
+    struct T_DetectingMethod {
+        sequence<char,20> A_detectorType;    //@ID 81702893
+        sequence<char,20> A_algorithm;    //@ID 156910574
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+    struct C_Detection {
+        P_LDM_Common::T_Identifier A_sourceID; //@key
+    //@ID 118386796
+        P_LDM_Common::T_DateTime A_timeOfDataGeneration;    //@ID 234062147
+        P_LDM_Common::T_Uuid A_detectionUniqueID; //@key
+    //@ID 246744424
+        double A_confidence;    //@ID 136595483
+        sequence<char,20> A_detectionClassification;    //@ID 85099305
+        double A_detectionClassScore;    //@ID 76917289
+        T_IFFCategory A_detectionForceType;    //@ID 180790050
+        T_EngagementStatus A_detectionThreatStatus;    //@ID 223270006
+        T_Interception A_interception;    //@ID 115597617
+        T_DetectionState A_detectionStatus;    //@ID 20783098
+        T_DetectionType A_type;    //@ID 60540847
+        P_LDM_Common::T_Duration A_lifeSpan;    //@ID 33812822
+        short A_priority;    //@ID 261701171
+        T_Trajectory A_trajectoryType;    //@ID 130758057
+        sequence<P_Tactical_Sensor_PSM::T_Sensing_Method,15> A_method;    //@ID 21615206
+        boolean A_spatialParametersAvailable;    //@ID 59484478
+        T_Spatial_Info A_spatialInfo;    //@ID 266667200
+        T_SuspensionCause A_suspensionCause;    //@ID 120918324
+        sequence<char,20> A_designatedInfo; //@Optional
+    //@ID 44045387
+        octet A_numberOfDetectionMethods; //@Optional
+    //@ID 165807565
+        sequence<P_Tactical_Sensor_PSM::T_DetectingMethod,32> A_detectionMethods; //@Optional
+    //@ID 87615255
+        boolean A_snapshotAvailable;    //@ID 149581014
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_Tactical_Sensor_PSM' module
+
+module P_LDM_Common {
+    struct T_VideoPosition {
+        double A_verticalPosition;    //@ID 211066011
+        double A_horizontalPosition;    //@ID 83622824
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_LDM_Common' module
+
+module P_Tactical_Sensor_PSM {
+    struct C_Detection_Optronics : C_Detection {
+        double A_opticalErrorRadius;    //@ID 38790974
+        boolean A_absoluteDirectionAvailable;    //@ID 57211100
+        P_LDM_Common::T_CoordinatePolar3D A_sensorLOS;    //@ID 139547978
+        P_LDM_Common::T_CoordinatePolar3D A_sensorLOSAccuracy;    //@ID 254391707
+        boolean A_videoDataAvailable;    //@ID 35928540
+        P_LDM_Common::T_Identifier A_videoStreamSourceID;    //@ID 152966567
+        P_LDM_Common::T_VideoPosition A_detectionCenterVideoLocation;    //@ID 83507131
+        P_LDM_Common::T_VideoPosition A_detectionSizeOnVideo;    //@ID 99643024
+        P_LDM_Common::T_VideoPosition A_detectionVideoAccuracy;    //@ID 216440692
+    };
+    //@Extensibility MUTABLE_EXTENSIBILITY
+
+}; // end of 'P_Tactical_Sensor_PSM' module
+
