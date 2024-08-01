@@ -3,19 +3,18 @@ import asyncio
 from rti.idl import struct
 import rti.asyncio
 import rti.connextdds as dds
-import constants as const
+from constants import DEFAULT_DOMAIN_ID, QOS_PROVIDER, PROFILE_NAME
 from auto_idl_types.DetectionOptronics import P_Tactical_Sensor_PSM_C_Detection_Optronics
 
 
 class ProfilesExamplePublisher:
-    def __init__(self, topic_name: str, topic_struct: struct):
-
+    def __init__(self, topic_name: str, topic_struct: struct, domain_id=DEFAULT_DOMAIN_ID):
         # Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
-        qos_provider = dds.QosProvider(const.QOS_PROVIDER)
+        qos_provider = dds.QosProvider(QOS_PROVIDER)
 
         # Create a DomainParticipant with the default QoS of the provider.
         self.participant = dds.DomainParticipant(
-            const.DOMAIN_ID, qos_provider.participant_qos
+            domain_id, qos_provider.participant_qos
         )
 
         # Create a Publisher with default QoS.
@@ -35,7 +34,7 @@ class ProfilesExamplePublisher:
             publisher,
             topic,
             qos_provider.datawriter_qos_from_profile(
-                const.PROFILE_NAME
+                PROFILE_NAME
             ),
         )
 
