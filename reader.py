@@ -33,28 +33,21 @@ class ProfilesExampleSubscriber:
             qos_provider.topic_qos,
         )
 
-        # Create a DataReader with the QoS profile "Default",
-        # which is in the QoS library "Barak_Library".
-        self.reader_default = dds.DataReader(
-            self.subscriber,
-            self.topic,
-            qos_provider.datareader_qos_from_profile(
-                PROFILE_NAME
-            ),
-        )
-
-        self.samples_read = 0
-
         # Extract key fields and create the ContentFilteredTopic
-        expression = " OR ".join([f"(A_sourceID.A_platformId = {key.A_platformId} AND "
-                                  f"A_sourceID.A_moduleId = {key.A_moduleId} AND "
-                                  f"A_sourceID.A_systemId = {key.A_systemId})" for key in filter_keys])
+        expressions = []
+        for key in filter_keys:
+            expr = f"(A_sourceID.A_platformId = {key.A_platformId} AND " \
+                   f"A_sourceID.A_moduleId = {key.A_moduleId} AND " \
+                   f"A_sourceID.A_systemId = {key.A_systemId})"
+            expressions.append(expr)
+
+        expression = " OR ".join(expressions)
         filter_test = dds.Filter(expression)
 
-        # Create the ContentFilteredTopic
         self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name + "_filtered", filter_test)
 
-    # Update the DataReader to use the filtered topic
+        # Create a DataReader with the QoS profile "Default",
+        # which is in the QoS library "Barak_Library".
         self.reader_default = dds.DataReader(
             self.subscriber,
             self.filtered_topic,
@@ -62,6 +55,8 @@ class ProfilesExampleSubscriber:
                 PROFILE_NAME
             ),
         )
+
+        self.samples_read = 0
 
     def execute_subscribe_event(self, *args, **kwargs):
         return self.subscribe_event(*args, **kwargs)
