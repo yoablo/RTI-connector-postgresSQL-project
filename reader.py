@@ -8,8 +8,8 @@ from auto_idl_types.DetectionOptronics import P_Tactical_Sensor_PSM_C_Detection_
 
 
 class ProfilesExampleSubscriber:
-    def __init__(self, topic_name: str, topic_struct: idl.struct, subscribe_event, filter_keys: list,
-                 domain_id=DEFAULT_DOMAIN_ID):
+    def __init__(self, topic_name: str, topic_struct: idl.struct, subscribe_event,
+                 filter_keys: list[P_LDM_Common_T_Identifier], domain_id=DEFAULT_DOMAIN_ID):
         self.subscribe_event = subscribe_event
 
         # Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
@@ -46,11 +46,10 @@ class ProfilesExampleSubscriber:
         self.samples_read = 0
 
         # Extract key fields and create the ContentFilteredTopic
-        self.filter_keys = filter_keys
-        key_field_values = [f"{key.A_platformId}.{key.A_systemId}.{key.A_moduleId}" for key in filter_keys]
-        # Join the key field values for the filter expression
-        filter_expression = " OR ".join([f"A_sourceID = {key}" for key in key_field_values])
-        filter_test = dds.Filter(filter_expression)
+        expression = " OR ".join([f"(A_sourceID.A_platformId = {key.A_platformId} AND "
+                                  f"A_sourceID.A_moduleId = {key.A_moduleId} AND "
+                                  f"A_sourceID.A_systemId = {key.A_systemId})" for key in filter_keys])
+        filter_test = dds.Filter(expression)
 
         # Create the ContentFilteredTopic
         self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name + "_filtered", filter_test)
@@ -64,17 +63,15 @@ class ProfilesExampleSubscriber:
             ),
         )
 
+    def execute_subscribe_event(self, *args, **kwargs):
+        return self.subscribe_event(*args, **kwargs)
 
-def execute_subscribe_event(self, *args, **kwargs):
-    return self.subscribe_event(*args, **kwargs)
-
-
-async def run(self, sample_count: int):
-    async for data in self.reader_default.take_data_async():
-        self.execute_subscribe_event(data)
-        self.samples_read += 1
-        if self.samples_read >= sample_count:
-            break
+    async def run(self, sample_count: int):
+        async for data in self.reader_default.take_data_async():
+            self.execute_subscribe_event(data)
+            self.samples_read += 1
+            if self.samples_read >= sample_count:
+                break
 
 
 if __name__ == "__main__":
