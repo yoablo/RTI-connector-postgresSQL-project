@@ -1,5 +1,6 @@
 import rti.asyncio
 import rti.connextdds as dds
+from typing import Callable
 from loguru import logger
 
 import constants as const
@@ -7,7 +8,7 @@ from Configuration.TopicData import StructEnum, topic_data_dict
 
 
 class Subscriber:
-    def __init__(self, struct_enum: StructEnum, subscribe_event):
+    def __init__(self, struct_enum: StructEnum, subscribe_event: Callable):
         self.topic_name = topic_data_dict[struct_enum].topic_name
         self.topic_struct = topic_data_dict[struct_enum].topic_struct
 

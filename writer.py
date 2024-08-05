@@ -30,7 +30,7 @@ class Publisher:
             ),
         )
 
-    async def __run(self, struct_to_publish):
+    async def __run(self, struct_to_publish: idl.struct):
         self.writer_default.write(struct_to_publish)
 
     def publish(self, struct_to_publish: idl.struct):
