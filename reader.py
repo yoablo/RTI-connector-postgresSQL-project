@@ -1,35 +1,33 @@
-import sys
 import rti.asyncio
 import rti.connextdds as dds
 import rti.idl as idl
 
+from auto_idl_types.LDM_Common import P_LDM_Common_T_Identifier
 from constants import DEFAULT_DOMAIN_ID, QOS_PROVIDER, PROFILE_NAME
-from auto_idl_types.DetectionOptronics import P_Tactical_Sensor_PSM_C_Detection_Optronics, P_LDM_Common_T_Identifier
+
+from typing import Callable
+from loguru import logger
+from Configuration.TopicData import StructEnum, topic_data_dict
 
 
-class ProfilesExampleSubscriber:
-    def __init__(self, topic_name: str, topic_struct: idl.struct, subscribe_event,
+class Subscriber:
+    def __init__(self, struct_enum: StructEnum, subscribe_event: Callable,
                  filter_keys: list[P_LDM_Common_T_Identifier], domain_id=DEFAULT_DOMAIN_ID):
-        self.subscribe_event = subscribe_event
+        self.topic_name = topic_data_dict[struct_enum].topic_name
+        self.topic_struct = topic_data_dict[struct_enum].topic_struct
 
-        # Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
         qos_provider = dds.QosProvider(QOS_PROVIDER)
 
-        # Create a DomainParticipant with the default QoS of the provider.
         self.participant = dds.DomainParticipant(
             domain_id, qos_provider.participant_qos
         )
-
-        # Create a Subscriber with default QoS.
         self.subscriber = dds.Subscriber(
             self.participant, qos_provider.subscriber_qos
         )
-
-        # Create a Topic with default QoS.
         self.topic = dds.Topic(
             self.participant,
-            topic_name,
-            topic_struct,
+            self.topic_name,
+            self.topic_struct,
             qos_provider.topic_qos,
         )
 
@@ -55,18 +53,21 @@ class ProfilesExampleSubscriber:
                 PROFILE_NAME
             ),
         )
+        self.subscribe_event = subscribe_event
 
-        self.samples_read = 0
-
-    def execute_subscribe_event(self, *args, **kwargs):
+    def __execute_subscribe_event(self, *args, **kwargs):
         return self.subscribe_event(*args, **kwargs)
 
-    async def run(self, sample_count: int):
+    async def __run(self):
         async for data in self.reader_default.take_data_async():
-            self.execute_subscribe_event(data)
-            self.samples_read += 1
-            if self.samples_read >= sample_count:
-                break
+            self.__execute_subscribe_event(data)
+            logger.trace(f'{data}')
+
+    def subscribe(self):
+        try:
+            rti.asyncio.run(self.__run())
+        except KeyboardInterrupt:
+            pass
 
 
 if __name__ == "__main__":
@@ -82,9 +83,8 @@ if __name__ == "__main__":
         ]
 
         # Pass the filter keys to the ProfilesExampleSubscriber constructor
-        subscriber = ProfilesExampleSubscriber("P_Tactical_Sensor_PSM::C_Detection_Optronics",
-                                               P_Tactical_Sensor_PSM_C_Detection_Optronics, test_event, filter_keys)
-        rti.asyncio.run(subscriber.run(sys.maxsize))
+        subscriber = Subscriber(StructEnum.DETECTION_OPTRONICS, test_event, filter_keys)
+        subscriber.subscribe()
 
     except KeyboardInterrupt:
         pass

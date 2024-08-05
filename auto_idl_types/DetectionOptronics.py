@@ -9,7 +9,7 @@
 from dataclasses import field
 import rti.idl as idl
 from auto_idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
-from auto_idl_types.Detection import P_Tactical_Sensor_PSM as P_Tactical_Sensor_PSM_Object, P_Tactical_Sensor_PSM_C_Detection
+from auto_idl_types.Detection import P_Tactical_Sensor_PSM as P_Tactical_Sensor_PSM_Object
 
 P_LDM_Common = P_LDM_Common_Objet
 
@@ -30,7 +30,7 @@ P_Tactical_Sensor_PSM = P_Tactical_Sensor_PSM_Object
         'A_detectionVideoAccuracy': [idl.id(216440692), ],
     }
 )
-class P_Tactical_Sensor_PSM_C_Detection_Optronics(P_Tactical_Sensor_PSM_C_Detection):
+class P_Tactical_Sensor_PSM_C_Detection_Optronics(P_Tactical_Sensor_PSM.C_Detection):
     A_opticalErrorRadius: float = 0.0
     A_absoluteDirectionAvailable: bool = False
     A_sensorLOS: P_LDM_Common.T_CoordinatePolar3D = field(
@@ -48,10 +48,3 @@ class P_Tactical_Sensor_PSM_C_Detection_Optronics(P_Tactical_Sensor_PSM_C_Detect
 
 
 P_Tactical_Sensor_PSM.C_Detection_Optronics = P_Tactical_Sensor_PSM_C_Detection_Optronics
-
-
-class P_LDM_Common_T_Identifier:
-    def __init__(self, A_platformId: int, A_systemId: int, A_moduleId: int):
-        self.A_platformId = A_platformId
-        self.A_systemId = A_systemId
-        self.A_moduleId = A_moduleId
