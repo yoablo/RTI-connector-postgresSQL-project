@@ -1,19 +1,18 @@
 import rti.asyncio
 import rti.connextdds as dds
 from rti import idl
-
-import constants
+from constants import PROFILE_NAME, QOS_PROVIDER, DEFAULT_DOMAIN_ID
 from Configuration.TopicData import StructEnum, topic_data_dict
 
 
 class Publisher:
-    def __init__(self, struct_enum: StructEnum):
+    def __init__(self, struct_enum: StructEnum, domain_id: DEFAULT_DOMAIN_ID):
         self.topic_name = topic_data_dict[struct_enum].topic_name
         self.topic_struct = topic_data_dict[struct_enum].topic_struct
-        qos_provider = dds.QosProvider(constants.QOS_PROVIDER)
+        qos_provider = dds.QosProvider(QOS_PROVIDER)
 
         self.participant = dds.DomainParticipant(
-            constants.DOMAIN_ID, qos_provider.participant_qos
+            domain_id, qos_provider.participant_qos
         )
         publisher = dds.Publisher(self.participant, qos_provider.publisher_qos)
         topic = dds.Topic(
@@ -26,7 +25,7 @@ class Publisher:
             publisher,
             topic,
             qos_provider.datawriter_qos_from_profile(
-                constants.PROFILE_NAME
+                PROFILE_NAME
             ),
         )
 
