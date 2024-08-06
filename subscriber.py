@@ -1,10 +1,9 @@
 import rti.asyncio
-import rti.idl as idl
 import rti.connextdds as dds
 from loguru import logger
 from typing import Callable
-from Configuration.TopicData import StructEnum, topic_data_dict
-from auto_idl_types.LDM_Common import P_LDM_Common_T_Identifier
+from TopicData import StructEnum, topic_data_dict
+from idl_types.LDM_Common import P_LDM_Common_T_Identifier
 from constants import DEFAULT_DOMAIN_ID, QOS_PROVIDER, PROFILE_NAME
 
 
