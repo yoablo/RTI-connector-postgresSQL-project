@@ -1,8 +1,8 @@
 import rti.asyncio
 import rti.connextdds as dds
-from rti import idl
+from rti.idl import struct as idl_struct
 from constants import PROFILE_NAME, QOS_PROVIDER, DEFAULT_DOMAIN_ID
-from Configuration.TopicData import StructEnum, topic_data_dict
+from TopicData import StructEnum, topic_data_dict
 
 
 class Publisher:
@@ -29,10 +29,10 @@ class Publisher:
             ),
         )
 
-    async def __run(self, struct_to_publish: idl.struct):
+    async def __run(self, struct_to_publish: idl_struct):
         self.writer_default.write(struct_to_publish)
 
-    def publish(self, struct_to_publish: idl.struct):
+    def publish(self, struct_to_publish: idl_struct):
         try:
             rti.asyncio.run(self.__run(struct_to_publish))
         except KeyboardInterrupt:

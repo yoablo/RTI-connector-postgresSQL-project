@@ -11,8 +11,8 @@ from typing import Sequence, Optional
 import rti.idl as idl
 from enum import IntEnum
 
-from auto_idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
-from auto_idl_types.Detection import P_Tactical_Sensor_PSM as P_Tactical_Sensor_PSM_Object
+from idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
+from idl_types.Detection import P_Tactical_Sensor_PSM as P_Tactical_Sensor_PSM_Object
 
 P_LDM_Common = P_LDM_Common_Objet
 P_Tactical_Sensor_PSM = P_Tactical_Sensor_PSM_Object
