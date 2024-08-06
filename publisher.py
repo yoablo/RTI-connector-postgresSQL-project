@@ -6,7 +6,7 @@ from TopicData import StructEnum, topic_data_dict
 
 
 class Publisher:
-    def __init__(self, struct_enum: StructEnum, domain_id: DEFAULT_DOMAIN_ID):
+    def __init__(self, struct_enum: StructEnum, domain_id=DEFAULT_DOMAIN_ID):
         self.topic_name = topic_data_dict[struct_enum].topic_name
         self.topic_struct = topic_data_dict[struct_enum].topic_struct
         qos_provider = dds.QosProvider(QOS_PROVIDER)
