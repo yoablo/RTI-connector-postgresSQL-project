@@ -29,8 +29,11 @@ class Subscriber:
             qos_provider.topic_qos,
         )
 
-        filter = dds.Filter(self.__get_filter_expression())
-        self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name + "_filtered", filter)
+        if filter_keys is not None:
+            filter_expression = dds.Filter(self.__get_filter_expression())
+            self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name + "_filtered", filter_expression)
+        else:
+            self.filtered_topic = self.topic
 
         self.reader_default = dds.DataReader(
             self.subscriber,

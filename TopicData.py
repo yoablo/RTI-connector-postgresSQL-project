@@ -11,6 +11,7 @@ from idl_types.TacticalSensor import P_Tactical_Sensor_PSM_C_Tactical_Sensor
 from idl_types.TacticalSensorSpecification import P_Tactical_Sensor_PSM_C_Tactical_Sensor_Specification
 
 
+#TODO change the name of the class to TopicEnum
 class StructEnum(Enum):
     DETECTION = 0,
     DETECTION_APS = 1,
@@ -26,7 +27,7 @@ class StructData:
     def __init__(self, topic_name, topic_struct):
         self.topic_name = topic_name
         self.topic_struct = topic_struct
-        self.topic_queue = queue.Queue
+        self.topic_queue = queue.Queue(maxsize=3000)
 
 
 topic_data_dict = {
