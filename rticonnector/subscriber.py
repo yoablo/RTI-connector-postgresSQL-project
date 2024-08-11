@@ -9,12 +9,12 @@ from rticonnector.constants import DEFAULT_DOMAIN_ID, PROFILE_NAME
 
 class Subscriber:
     def __init__(self, struct_enum: StructEnum, subscribe_event: Callable,
-                 filter_keys: list[P_LDM_Common_T_Identifier], xml_file_path: str, domain_id=DEFAULT_DOMAIN_ID):
+                 filter_keys: list[P_LDM_Common_T_Identifier], qos_file_path: str, domain_id=DEFAULT_DOMAIN_ID):
         self.topic_name = topic_data_dict[struct_enum].topic_name
         self.topic_struct = topic_data_dict[struct_enum].topic_struct
         self.filter_keys = filter_keys
 
-        qos_provider = dds.QosProvider(xml_file_path)
+        qos_provider = dds.QosProvider(qos_file_path)
 
         self.participant = dds.DomainParticipant(
             domain_id, qos_provider.participant_qos
