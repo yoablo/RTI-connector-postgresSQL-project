@@ -2,7 +2,7 @@ from dataclasses import field
 from typing import Sequence
 import rti.idl as idl
 
-from idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
+from rticonnector.idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
 
 
 P_LDM_Common = P_LDM_Common_Objet
