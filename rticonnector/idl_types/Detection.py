@@ -3,7 +3,7 @@ from enum import IntEnum
 from typing import Sequence, Optional
 from rti import idl
 
-from idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
+from rticonnector.idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
 
 P_LDM_Common = P_LDM_Common_Objet
 P_Tactical_Sensor_PSM = idl.get_module("P_Tactical_Sensor_PSM")

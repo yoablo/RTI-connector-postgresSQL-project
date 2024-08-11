@@ -2,8 +2,8 @@ from dataclasses import field
 from typing import Sequence, Optional
 import rti.idl as idl
 
-from idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
-from idl_types.Detection import P_Tactical_Sensor_PSM as P_Tactical_Sensor_PSM_Object
+from rticonnector.idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
+from rticonnector.idl_types.Detection import P_Tactical_Sensor_PSM as P_Tactical_Sensor_PSM_Object
 
 P_LDM_Common = P_LDM_Common_Objet
 
