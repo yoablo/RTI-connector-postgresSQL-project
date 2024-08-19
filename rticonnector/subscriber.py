@@ -59,14 +59,7 @@ class Subscriber:
             logger.trace(f'{data}')
 
     def __subscribe_thread(self):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            loop.run_until_complete(self.__run())
-        except KeyboardInterrupt:
-            pass
-        finally:
-            loop.close()
+        asyncio.run(self.__run())
 
     def subscribe(self):
         subscription_thread = threading.Thread(target=self.__subscribe_thread, daemon=True)

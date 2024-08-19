@@ -36,14 +36,7 @@ class Publisher:
         self.writer_default.write(struct_to_publish)
 
     def __publish_thread(self, struct_to_publish: idl_struct):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            loop.run_until_complete(self.__run(struct_to_publish))
-        except KeyboardInterrupt:
-            pass
-        finally:
-            loop.close()
+        asyncio.run(self.__run(struct_to_publish))
 
     def publish(self, struct_to_publish: idl_struct):
         publish_thread = threading.Thread(target=self.__publish_thread, args=(struct_to_publish,), daemon=True)
