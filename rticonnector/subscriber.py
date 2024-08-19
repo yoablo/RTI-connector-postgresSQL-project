@@ -1,3 +1,6 @@
+import asyncio
+import threading
+
 import rti.asyncio
 import rti.connextdds as dds
 from loguru import logger
@@ -44,19 +47,27 @@ class Subscriber:
     def __execute_subscribe_event(self, *args, **kwargs):
         return self.subscribe_event(*args, **kwargs)
 
-    async def __run(self):
-        async for data in self.reader_default.take_data_async():
-            self.__execute_subscribe_event(data)
-            logger.trace(f'{data}')
-
     def __get_filter_expression(self) -> str:
         return " OR ".join(map(lambda key: f"(A_sourceID.A_platformId = {key.A_platformId} "
                                            f"AND A_sourceID.A_moduleId = {key.A_moduleId} "
                                            f"AND A_sourceID.A_systemId = {key.A_systemId})",
                                self.filter_keys))
 
-    def subscribe(self):
+    async def __run(self):
+        async for data in self.reader_default.take_data_async():
+            self.__execute_subscribe_event(data)
+            logger.trace(f'{data}')
+
+    def __subscribe_thread(self):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         try:
-            rti.asyncio.run(self.__run())
+            loop.run_until_complete(self.__run())
         except KeyboardInterrupt:
             pass
+        finally:
+            loop.close()
+
+    def subscribe(self):
+        subscription_thread = threading.Thread(target=self.__subscribe_thread, daemon=True)
+        subscription_thread.start()
