@@ -1,18 +1,17 @@
 import asyncio
 import threading
-
-import rti.asyncio
 import rti.connextdds as dds
 from rti.idl import struct as idl_struct
-from rticonnector.constants import PROFILE_NAME, DEFAULT_DOMAIN_ID
+
 from rticonnector.TopicData import StructEnum, topic_data_dict
+from rticonnector.constants import PROFILE_NAME, DEFAULT_DOMAIN_ID, QOS_FILE_PATH
 
 
 class Publisher:
-    def __init__(self, struct_enum: StructEnum, qos_file_path: str, domain_id=DEFAULT_DOMAIN_ID):
+    def __init__(self, struct_enum: StructEnum, domain_id=DEFAULT_DOMAIN_ID):
         self.topic_name = topic_data_dict[struct_enum].topic_name
         self.topic_struct = topic_data_dict[struct_enum].topic_struct
-        qos_provider = dds.QosProvider(qos_file_path)
+        qos_provider = dds.QosProvider(QOS_FILE_PATH)
 
         self.participant = dds.DomainParticipant(
             domain_id, qos_provider.participant_qos
