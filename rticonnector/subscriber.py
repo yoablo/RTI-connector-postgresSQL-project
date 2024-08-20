@@ -1,3 +1,4 @@
+import rti.asyncio  # we are not using it directly but removing it will get en error
 import asyncio
 import threading
 from loguru import logger
@@ -12,8 +13,7 @@ from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
 class Subscriber:
     def __init__(self, struct_enum: StructEnum, subscribe_event: Callable,
                  filter_keys: list[P_LDM_Common_T_Identifier], domain_id=DEFAULT_DOMAIN_ID):
-        self.topic_name = topic_data_dict[struct_enum].topic_name
-        self.topic_struct = topic_data_dict[struct_enum].topic_struct
+        self.struct_enum = struct_enum
         self.filter_keys = filter_keys
 
         qos_provider = dds.QosProvider(QOS_FILE_PATH)
@@ -26,8 +26,8 @@ class Subscriber:
         )
         self.topic = dds.Topic(
             self.participant,
-            self.topic_name,
-            self.topic_struct,
+            topic_data_dict[struct_enum].topic_name,
+            topic_data_dict[struct_enum].topic_struct,
             qos_provider.topic_qos,
         )
 
@@ -54,8 +54,8 @@ class Subscriber:
 
     async def __run(self):
         async for data in self.reader_default.take_data_async():
-            self.__execute_subscribe_event(data)
-            logger.trace(f'{data}')
+            self.__execute_subscribe_event(self.struct_enum, data)
+            logger.trace(f'called the subscribe event with {self.struct_enum}, where {data = }')
 
     def __subscribe_thread(self):
         asyncio.run(self.__run())
