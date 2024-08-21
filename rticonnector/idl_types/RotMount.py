@@ -10,7 +10,7 @@ from dataclasses import field
 import rti.idl as idl
 from enum import IntEnum
 
-from idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
+from rticonnector.idl_types.LDM_Common import P_LDM_Common as P_LDM_Common_Objet
 
 P_LDM_Common = P_LDM_Common_Objet
 P_Mount_PSM = idl.get_module("P_Mount_PSM")
