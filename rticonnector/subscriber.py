@@ -1,17 +1,18 @@
+import rti.asyncio
 import asyncio
+import rti.connextdds as dds
 import threading
 from loguru import logger
-from typing import Callable
-import rti.connextdds as dds
+from typing import Callable, Union
 
 from rticonnector.TopicData import StructEnum, topic_data_dict
-from rticonnector.constants import DEFAULT_DOMAIN_ID, PROFILE_NAME, QOS_FILE_PATH
 from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
+from rticonnector.constants import DEFAULT_DOMAIN_ID, QOS_FILE_PATH, PROFILE_NAME
 
 
 class Subscriber:
     def __init__(self, struct_enum: StructEnum, subscribe_event: Callable,
-                 filter_keys: list[P_LDM_Common_T_Identifier], domain_id=DEFAULT_DOMAIN_ID):
+                 filter_keys: Union[list[P_LDM_Common_T_Identifier], str, None], domain_id=DEFAULT_DOMAIN_ID):
         self.topic_name = topic_data_dict[struct_enum].topic_name
         self.topic_struct = topic_data_dict[struct_enum].topic_struct
         self.filter_keys = filter_keys
@@ -30,9 +31,16 @@ class Subscriber:
             self.topic_struct,
             qos_provider.topic_qos,
         )
-
-        filter = dds.Filter(self.__get_filter_expression())
-        self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name + "_filtered", filter)
+        if filter_keys is not None:
+            if isinstance(filter_keys, str):
+                filter_expression = dds.Filter(filter_keys)
+            elif isinstance(filter_keys, list):
+                filter_expression = dds.Filter(self.__get_filter_expression())
+            else:
+                raise ValueError("Invalid type for filter_keys. Must be str or list.")
+            self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name + "_filtered", filter_expression)
+        else:
+            self.filtered_topic = self.topic
 
         self.reader_default = dds.DataReader(
             self.subscriber,
