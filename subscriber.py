@@ -1,7 +1,7 @@
 import rti.asyncio
 import rti.connextdds as dds
 from loguru import logger
-from typing import Callable
+from typing import Callable, Union
 from TopicData import StructEnum, topic_data_dict
 from idl_types.LDM_Common import P_LDM_Common_T_Identifier
 from constants import DEFAULT_DOMAIN_ID, QOS_PROVIDER, PROFILE_NAME
@@ -9,7 +9,7 @@ from constants import DEFAULT_DOMAIN_ID, QOS_PROVIDER, PROFILE_NAME
 
 class Subscriber:
     def __init__(self, struct_enum: StructEnum, subscribe_event: Callable,
-                 filter_keys: list[P_LDM_Common_T_Identifier], domain_id=DEFAULT_DOMAIN_ID):
+                 filter_keys: Union[list[P_LDM_Common_T_Identifier], str, None], domain_id=DEFAULT_DOMAIN_ID):
         self.topic_name = topic_data_dict[struct_enum].topic_name
         self.topic_struct = topic_data_dict[struct_enum].topic_struct
         self.filter_keys = filter_keys
@@ -28,9 +28,13 @@ class Subscriber:
             self.topic_struct,
             qos_provider.topic_qos,
         )
-
         if filter_keys is not None:
-            filter_expression = dds.Filter(self.__get_filter_expression())
+            if isinstance(filter_keys, str):
+                filter_expression = dds.Filter(filter_keys)
+            elif isinstance(filter_keys, list):
+                filter_expression = dds.Filter(self.__get_filter_expression())
+            else:
+                raise ValueError("Invalid type for filter_keys. Must be str or list.")
             self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name + "_filtered", filter_expression)
         else:
             self.filtered_topic = self.topic

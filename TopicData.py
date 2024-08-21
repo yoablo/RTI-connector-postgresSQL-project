@@ -27,7 +27,6 @@ class StructData:
     def __init__(self, topic_name, topic_struct):
         self.topic_name = topic_name
         self.topic_struct = topic_struct
-        self.topic_queue = queue.Queue(maxsize=3000)
 
 
 topic_data_dict = {
