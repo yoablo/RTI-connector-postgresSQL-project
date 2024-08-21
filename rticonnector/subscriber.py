@@ -1,4 +1,5 @@
 import rti.asyncio
+import asyncio
 import rti.connextdds as dds
 import threading
 from loguru import logger
@@ -6,7 +7,7 @@ from typing import Callable, Union
 
 from rticonnector.TopicData import StructEnum, topic_data_dict
 from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
-from rticonnector.constants import DEFAULT_DOMAIN_ID, QOS_PROVIDER, PROFILE_NAME
+from rticonnector.constants import DEFAULT_DOMAIN_ID, QOS_FILE_PATH, PROFILE_NAME
 
 
 class Subscriber:
@@ -16,7 +17,7 @@ class Subscriber:
         self.topic_struct = topic_data_dict[struct_enum].topic_struct
         self.filter_keys = filter_keys
 
-        qos_provider = dds.QosProvider(QOS_PROVIDER)
+        qos_provider = dds.QosProvider(QOS_FILE_PATH)
 
         self.participant = dds.DomainParticipant(
             domain_id, qos_provider.participant_qos
