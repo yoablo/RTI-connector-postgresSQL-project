@@ -1,5 +1,4 @@
 from enum import Enum
-import queue
 
 from idl_types.Detection import P_Tactical_Sensor_PSM_C_Detection
 from idl_types.DetectionAps import P_Tactical_Sensor_PSM_C_Detection_Aps
