@@ -10,8 +10,7 @@ from rticonnector.idl_types.TacticalSensor import P_Tactical_Sensor_PSM_C_Tactic
 from rticonnector.idl_types.TacticalSensorSpecification import P_Tactical_Sensor_PSM_C_Tactical_Sensor_Specification
 
 
-#TODO change the name of the class to TopicEnum
-class StructEnum(Enum):
+class TopicEnum(Enum):
     DETECTION = 0,
     DETECTION_APS = 1,
     DETECTION_OPTRONICS = 2,
@@ -22,27 +21,27 @@ class StructEnum(Enum):
     TACTICAL_SENSOR_SPECIFICATION = 7
 
 
-class StructData:
+class TopicData:
     def __init__(self, topic_name, topic_struct):
         self.topic_name = topic_name
         self.topic_struct = topic_struct
 
 
 topic_data_dict = {
-    StructEnum.DETECTION: StructData(
+    TopicEnum.DETECTION: TopicData(
         "P_Tactical_Sensor_PSM::C_Detection", P_Tactical_Sensor_PSM_C_Detection),
-    StructEnum.DETECTION_APS: StructData(
+    TopicEnum.DETECTION_APS: TopicData(
         "P_Tactical_Sensor_PSM::C_Detection_Aps", P_Tactical_Sensor_PSM_C_Detection_Aps),
-    StructEnum.DETECTION_OPTRONICS: StructData(
+    TopicEnum.DETECTION_OPTRONICS: TopicData(
         "P_Tactical_Sensor_PSM::C_Detection_Optronics", P_Tactical_Sensor_PSM_C_Detection_Optronics),
-    StructEnum.POSITION: StructData(
+    TopicEnum.POSITION: TopicData(
         "P_Navigation_PSM::C_Position", P_Navigation_PSM_C_Position),
-    StructEnum.RESOURCE_SPECIFICATION: StructData(
+    TopicEnum.RESOURCE_SPECIFICATION: TopicData(
         "P_Maintenance_PSM::C_Resource_Specification", P_Maintenance_PSM_C_Resource_Specification),
-    StructEnum.ROT_MOUNT: StructData(
+    TopicEnum.ROT_MOUNT: TopicData(
         "P_Mount_PSM::C_Rot_Mount", P_Mount_PSM_C_Rot_Mount),
-    StructEnum.TACTICAL_SENSOR: StructData(
+    TopicEnum.TACTICAL_SENSOR: TopicData(
         "P_Tactical_Sensor_PSM::C_Tactical_Sensor", P_Tactical_Sensor_PSM_C_Tactical_Sensor),
-    StructEnum.TACTICAL_SENSOR_SPECIFICATION: StructData(
+    TopicEnum.TACTICAL_SENSOR_SPECIFICATION: TopicData(
         "P_Tactical_Sensor_PSM::C_Tactical_Sensor_Specification", P_Tactical_Sensor_PSM_C_Tactical_Sensor_Specification)
 }
