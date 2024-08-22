@@ -10,6 +10,7 @@ from rticonnector.idl_types.TacticalSensor import P_Tactical_Sensor_PSM_C_Tactic
 from rticonnector.idl_types.TacticalSensorSpecification import P_Tactical_Sensor_PSM_C_Tactical_Sensor_Specification
 
 
+#TODO change the name of the class to TopicEnum
 class StructEnum(Enum):
     DETECTION = 0,
     DETECTION_APS = 1,
