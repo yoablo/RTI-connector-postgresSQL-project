@@ -5,7 +5,7 @@ import threading
 from loguru import logger
 from typing import Callable, Union
 
-from rticonnector.TopicData import TopicEnum, topic_data_dict
+from rticonnector.topic_data import TopicEnum, topic_data_dict
 from rticonnector.constants import DEFAULT_DOMAIN_ID, PROFILE_NAME, QOS_FILE_PATH
 from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
 
