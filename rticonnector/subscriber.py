@@ -5,15 +5,15 @@ import threading
 from loguru import logger
 from typing import Callable, Union
 
-from rticonnector.TopicData import StructEnum, topic_data_dict
+from rticonnector.TopicData import TopicEnum, topic_data_dict
 from rticonnector.constants import DEFAULT_DOMAIN_ID, PROFILE_NAME, QOS_FILE_PATH
 from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
 
 
 class Subscriber:
-    def __init__(self, struct_enum: StructEnum, subscribe_event: Callable,
+    def __init__(self, topic_enum: TopicEnum, subscribe_event: Callable,
                  filter_keys: Union[list[P_LDM_Common_T_Identifier], str, None], domain_id=DEFAULT_DOMAIN_ID):
-        self.struct_enum = struct_enum
+        self.topic_enum = topic_enum
         qos_provider = dds.QosProvider(QOS_FILE_PATH)
 
         self.participant = dds.DomainParticipant(
@@ -24,8 +24,8 @@ class Subscriber:
         )
         self.topic = dds.Topic(
             self.participant,
-            topic_data_dict[struct_enum].topic_name,
-            topic_data_dict[struct_enum].topic_struct,
+            topic_data_dict[topic_enum].topic_name,
+            topic_data_dict[topic_enum].topic_struct,
             qos_provider.topic_qos,
         )
         if filter_keys is not None:
@@ -60,8 +60,8 @@ class Subscriber:
 
     async def __run(self):
         async for data in self.reader_default.take_data_async():
-            self.__execute_subscribe_event(self.struct_enum, data)
-            logger.trace(f'called the subscribe event with {self.struct_enum}, where {data = }')
+            self.__execute_subscribe_event(self.topic_enum, data)
+            logger.trace(f'called the subscribe event with {self.topic_enum}, where {data = }')
 
     def __subscribe_thread(self):
         asyncio.run(self.__run())
