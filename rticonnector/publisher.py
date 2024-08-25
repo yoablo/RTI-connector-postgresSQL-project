@@ -4,14 +4,14 @@ import rti.connextdds as dds
 from rti.idl import struct as idl_struct
 
 from rticonnector.topic_data import TopicEnum, topic_data_dict
-from rticonnector.constants import PROFILE_NAME, DEFAULT_DOMAIN_ID, QOS_FILE_PATH
+from rticonnector.constants import PROFILE_NAME, DEFAULT_DOMAIN_ID
 
 
 class Publisher:
-    def __init__(self, topic_enum: TopicEnum, domain_id=DEFAULT_DOMAIN_ID):
+    def __init__(self, topic_enum: TopicEnum, qos_file_path: str, domain_id=DEFAULT_DOMAIN_ID):
         self.topic_name = topic_data_dict[topic_enum].topic_name
         self.topic_struct = topic_data_dict[topic_enum].topic_struct
-        qos_provider = dds.QosProvider(QOS_FILE_PATH)
+        qos_provider = dds.QosProvider(qos_file_path)
 
         self.participant = dds.DomainParticipant(
             domain_id, qos_provider.participant_qos
