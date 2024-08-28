@@ -1,5 +1,7 @@
 import asyncio
 import threading
+from os import getenv
+
 import rti.connextdds as dds
 from rti.idl import struct as idl_struct
 
@@ -8,9 +10,13 @@ from rticonnector.constants import PROFILE_NAME, DEFAULT_DOMAIN_ID
 
 
 class Publisher:
-    def __init__(self, topic_enum: TopicEnum, qos_file_path: str, domain_id=DEFAULT_DOMAIN_ID):
+    def __init__(self, topic_enum: TopicEnum, qos_file_path: str = None, domain_id=DEFAULT_DOMAIN_ID):
         self.topic_name = topic_data_dict[topic_enum].topic_name
         self.topic_struct = topic_data_dict[topic_enum].topic_struct
+        if qos_file_path is None:
+            qos_file_path = getenv('QOS_FILE_PATH')
+            if qos_file_path is None:
+                raise Exception('please put the path to the qos file in an env variable')
         qos_provider = dds.QosProvider(qos_file_path)
 
         self.participant = dds.DomainParticipant(
