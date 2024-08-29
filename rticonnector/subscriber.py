@@ -1,3 +1,4 @@
+from os import getenv
 import rti.asyncio  # we are not using it directly but removing it will get en error
 import asyncio
 import rti.connextdds as dds
@@ -6,15 +7,20 @@ from loguru import logger
 from typing import Callable, Union
 
 from rticonnector.topic_data import TopicEnum, topic_data_dict
-from rticonnector.constants import DEFAULT_DOMAIN_ID, PROFILE_NAME, QOS_FILE_PATH
+from rticonnector.constants import DEFAULT_DOMAIN_ID, PROFILE_NAME
 from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
 
 
 class Subscriber:
     def __init__(self, topic_enum: TopicEnum, subscribe_event: Callable,
-                 filter_keys: Union[list[P_LDM_Common_T_Identifier], str, None], domain_id=DEFAULT_DOMAIN_ID):
+                 filter_keys: Union[list[P_LDM_Common_T_Identifier], str, None], qos_file_path: str = None,
+                 domain_id=DEFAULT_DOMAIN_ID):
         self.topic_enum = topic_enum
-        qos_provider = dds.QosProvider(QOS_FILE_PATH)
+        if qos_file_path is None:
+            qos_file_path = getenv('QOS_FILE_PATH')
+            if qos_file_path is None:
+                raise Exception('please put the path to the qos file in an env variable')
+        qos_provider = dds.QosProvider(qos_file_path)
 
         self.participant = dds.DomainParticipant(
             domain_id, qos_provider.participant_qos
