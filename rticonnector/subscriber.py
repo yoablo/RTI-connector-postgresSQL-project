@@ -19,7 +19,7 @@ class Subscriber:
         if qos_file_path is None:
             qos_file_path = getenv('QOS_FILE_PATH')
             if qos_file_path is None:
-                raise Exception('please put the path to the qos file in an env variable')
+                raise ValueError('Env variable "QOS_FILE_PATH" is not set. please provide the path to the qos file.')
         qos_provider = dds.QosProvider(qos_file_path)
 
         self.participant = dds.DomainParticipant(
