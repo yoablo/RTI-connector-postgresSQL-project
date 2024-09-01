@@ -29,8 +29,9 @@ class Subscriber:
             qos_provider.topic_qos,
         )
 
-        self.filtered_topic = self.topic if filter_str == "" else\
-            dds.ContentFilteredTopic(self.topic, self.topic.name + "_filtered", dds.Filter(filter_str))
+        self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name, dds.Filter(filter_str))\
+            if filter_str != "" else self.topic
+
 
         self.reader_default = dds.DataReader(
             self.subscriber,
