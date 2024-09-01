@@ -8,12 +8,10 @@ from typing import Callable, Union
 from rticonnector.utils import get_qos_file
 from rticonnector.topic_data import TopicEnum, topic_data_dict
 from rticonnector.constants import DEFAULT_DOMAIN_ID, PROFILE_NAME
-from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
 
 
 class Subscriber:
-    def __init__(self, topic_enum: TopicEnum, subscribe_event: Callable,
-                 filter_keys: Union[list[P_LDM_Common_T_Identifier], str, None], qos_file_path: str = None,
+    def __init__(self, topic_enum: TopicEnum, subscribe_event: Callable, filter_str: str, qos_file_path: str = None,
                  domain_id=DEFAULT_DOMAIN_ID):
         self.topic_enum = topic_enum
         qos_provider = dds.QosProvider(get_qos_file(qos_file_path))
@@ -30,16 +28,10 @@ class Subscriber:
             topic_data_dict[topic_enum].topic_struct,
             qos_provider.topic_qos,
         )
-        if filter_keys is not None:
-            if isinstance(filter_keys, str):
-                filter_expression = dds.Filter(filter_keys)
-            elif isinstance(filter_keys, list):
-                filter_expression = dds.Filter(self.__get_filter_expression(filter_keys))
-            else:
-                raise ValueError("Invalid type for filter_keys. Must be str or list of P_LDM_Common_T_Identifier type")
-            self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name + "_filtered", filter_expression)
-        else:
-            self.filtered_topic = self.topic
+
+        self.filtered_topic = dds.ContentFilteredTopic(self.topic, self.topic.name, dds.Filter(filter_str))\
+            if filter_str != "" else self.topic
+
 
         self.reader_default = dds.DataReader(
             self.subscriber,
@@ -49,13 +41,6 @@ class Subscriber:
             ),
         )
         self.subscribe_event = subscribe_event
-
-    @staticmethod
-    def __get_filter_expression(filter_keys) -> str:
-        return " OR ".join(map(lambda key: f"(A_sourceID.A_platformId = {key.A_platformId} "
-                                           f"AND A_sourceID.A_systemId = {key.A_systemId} "
-                                           f"AND A_sourceID.A_moduleId = {key.A_moduleId})",
-                               filter_keys))
 
     def __execute_subscribe_event(self, *args, **kwargs):
         return self.subscribe_event(*args, **kwargs)
