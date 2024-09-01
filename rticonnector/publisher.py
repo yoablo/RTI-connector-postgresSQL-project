@@ -5,6 +5,7 @@ from os import getenv
 import rti.connextdds as dds
 from rti.idl import struct as idl_struct
 
+from utils import get_qos_file
 from rticonnector.topic_data import TopicEnum, topic_data_dict
 from rticonnector.constants import PROFILE_NAME, DEFAULT_DOMAIN_ID
 
