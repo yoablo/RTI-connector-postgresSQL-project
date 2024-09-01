@@ -1,12 +1,11 @@
 import rti.asyncio  # we are not using it directly but removing it will get en error
-from os import getenv
-import asyncio
-import rti.connextdds as dds
-import threading
+from asyncio import run
 from loguru import logger
+from threading import Thread
+import rti.connextdds as dds
 from typing import Callable, Union
 
-from utils import get_qos_file
+from rticonnector.utils import get_qos_file
 from rticonnector.topic_data import TopicEnum, topic_data_dict
 from rticonnector.constants import DEFAULT_DOMAIN_ID, PROFILE_NAME
 from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
@@ -67,8 +66,8 @@ class Subscriber:
             logger.trace(f'called the subscribe event with {self.topic_enum}, where {data = }')
 
     def __subscribe_thread(self):
-        asyncio.run(self.__run())
+        run(self.__run())
 
     def subscribe(self):
-        subscription_thread = threading.Thread(target=self.__subscribe_thread, daemon=True)
+        subscription_thread = Thread(target=self.__subscribe_thread, daemon=True)
         subscription_thread.start()

@@ -1,13 +1,11 @@
-import asyncio
-import threading
-from os import getenv
-
+from asyncio import run
+from threading import Thread
 import rti.connextdds as dds
 from rti.idl import struct as idl_struct
 
-from utils import get_qos_file
-from rticonnector.topic_data import TopicEnum, topic_data_dict
+from rticonnector.utils import get_qos_file
 from rticonnector.constants import PROFILE_NAME, DEFAULT_DOMAIN_ID
+from rticonnector.topic_data import TopicEnum, topic_data_dict
 
 
 class Publisher:
@@ -38,8 +36,8 @@ class Publisher:
         self.writer_default.write(struct_to_publish)
 
     def __publish_thread(self, struct_to_publish: idl_struct):
-        asyncio.run(self.__run(struct_to_publish))
+        run(self.__run(struct_to_publish))
 
     def publish(self, struct_to_publish: idl_struct):
-        publish_thread = threading.Thread(target=self.__publish_thread, args=(struct_to_publish,), daemon=True)
+        publish_thread = Thread(target=self.__publish_thread, args=(struct_to_publish,), daemon=True)
         publish_thread.start()

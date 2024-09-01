@@ -13,10 +13,7 @@ def str_list_to_short_string_sequence(str_list: list[str]) -> list[P_LDM_Common_
 
 
 def get_qos_file(qos_file_path: str) -> str:
-    if qos_file_path:  # Use the provided file path if available
-        return qos_file_path
-    qos_file_path = getenv('QOS_FILE_PATH')
-    if qos_file_path:  # try the environment variable if the file path is not provided
-        return qos_file_path
+    file_path = getenv('QOS_FILE_PATH') if qos_file_path is None else qos_file_path
+    if file_path:
+        return file_path
     raise ValueError('Env variable "QOS_FILE_PATH" is not set. Please provide the path to the QoS file.')
-    
