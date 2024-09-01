@@ -54,8 +54,8 @@ class Subscriber:
     @staticmethod
     def __get_filter_expression(filter_keys) -> str:
         return " OR ".join(map(lambda key: f"(A_sourceID.A_platformId = {key.A_platformId} "
-                                           f"AND A_sourceID.A_moduleId = {key.A_moduleId} "
-                                           f"AND A_sourceID.A_systemId = {key.A_systemId})",
+                                           f"AND A_sourceID.A_systemId = {key.A_systemId} "
+                                           f"AND A_sourceID.A_moduleId = {key.A_moduleId})",
                                filter_keys))
 
     def __execute_subscribe_event(self, *args, **kwargs):
