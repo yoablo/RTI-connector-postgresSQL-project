@@ -13,11 +13,11 @@ def str_list_to_string_sequence(str_list: list[str]) -> list[CharSequence]:
 
 
 def char_sequence_to_str(char_sequence: CharSequence) -> str:
-    return ''.join([chr(c) for c in char_sequence.value][:-1])
+    return ''.join([chr(c) for c in char_sequence][:-1])
 
 
 def string_sequence_to_str_list(string_sequence: list[CharSequence]) -> list[str]:
-    return [char_sequence_to_str(string_struct) for string_struct in string_sequence]
+    return [char_sequence_to_str(string_struct.value) for string_struct in string_sequence]
 
 
 def get_qos_file(qos_file_path: str) -> str:
