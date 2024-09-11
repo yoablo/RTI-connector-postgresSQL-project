@@ -1,15 +1,23 @@
 from os import getenv
 from rti.idl import char
 
-from rticonnector.idl_types.TacticalSensorSpecification import P_LDM_Common_T_ShortString
+from rticonnector.idl_types.Detection import CharSequence
 
 
 def str_to_char_sequence(str_input: str) -> list[char]:
     return [char(ord(ch)) for ch in str_input]
 
 
-def str_list_to_short_string_sequence(str_list: list[str]) -> list[P_LDM_Common_T_ShortString]:
-    return [P_LDM_Common_T_ShortString(str_to_char_sequence(string)) for string in str_list]
+def str_list_to_string_sequence(str_list: list[str]) -> list[CharSequence]:
+    return [CharSequence(str_to_char_sequence(string)) for string in str_list]
+
+
+def char_sequence_to_str(char_sequence: CharSequence) -> str:
+    return ''.join([chr(c) for c in char_sequence.value][:-1])
+
+
+def string_sequence_to_str_list(string_sequence: list[CharSequence]) -> list[str]:
+    return [char_sequence_to_str(string_struct) for string_struct in string_sequence]
 
 
 def get_qos_file(qos_file_path: str) -> str:
