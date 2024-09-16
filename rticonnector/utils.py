@@ -9,10 +9,6 @@ def str_to_char_sequence(str_input: str) -> Union[list[char], str]:
     return [ord(ch) for ch in str_input] if isinstance(str_input, str) else str_input
 
 
-def str_list_to_string_sequence(str_list: list[str]) -> list[CharSequence]:
-    return [str_to_char_sequence(string) for string in str_list]
-
-
 def char_sequence_to_str(char_sequence: CharSequence) -> str:
     return ''.join([chr(c) for c in char_sequence if c])
 
