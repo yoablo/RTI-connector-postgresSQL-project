@@ -1,19 +1,16 @@
 from os import getenv
 from rti.idl import char
+from typing import Union
 
 from rticonnector.idl_types.Detection import CharSequence
 
 
-def str_to_char_sequence(str_input: str) -> list[char]:
-    return [char(ord(ch)) for ch in str_input]
-
-
-def str_list_to_string_sequence(str_list: list[str]) -> list[CharSequence]:
-    return [CharSequence(str_to_char_sequence(string)) for string in str_list]
+def str_to_char_sequence(str_input: str) -> Union[list[char], str]:
+    return [ord(ch) for ch in str_input] if isinstance(str_input, str) else str_input
 
 
 def char_sequence_to_str(char_sequence: CharSequence) -> str:
-    return ''.join([chr(c) for c in char_sequence][:-1])
+    return ''.join([chr(c) for c in char_sequence if c])
 
 
 def string_sequence_to_str_list(string_sequence: list[CharSequence]) -> list[str]:
