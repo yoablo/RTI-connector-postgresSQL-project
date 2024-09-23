@@ -5,8 +5,8 @@ from typing import Union
 from rticonnector.idl_types.Detection import CharSequence
 
 
-def str_to_char_sequence(str_input: str) -> Union[list[char], str]:
-    return [ord(ch) for ch in str_input] if isinstance(str_input, str) else str_input
+def str_to_char_sequence(str_input: str) -> list[char]:
+    return [ord(ch) for ch in str_input]
 
 
 def char_sequence_to_str(char_sequence: CharSequence) -> str:
