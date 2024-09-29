@@ -1,15 +1,16 @@
 from os import getenv
-from typing import Optional
+from rti.idl import char
+from typing import Union
 
 from rticonnector.idl_types.Detection import CharSequence
 
 
-def str_to_char_sequence(str_input: str) -> Optional[list[int]]:
-    return [ord(ch) for ch in str_input] if str_input is not None else None
+def str_to_char_sequence(str_input: str) -> list[char]:
+    return [ord(ch) for ch in str_input]
 
 
-def char_sequence_to_str(char_sequence: CharSequence) -> Optional[str]:
-    return ''.join([chr(c) for c in char_sequence if c]) if char_sequence is not None else None
+def char_sequence_to_str(char_sequence: CharSequence) -> str:
+    return ''.join([chr(c) for c in char_sequence if c])
 
 
 def string_sequence_to_str_list(string_sequence: list[CharSequence]) -> list[str]:
