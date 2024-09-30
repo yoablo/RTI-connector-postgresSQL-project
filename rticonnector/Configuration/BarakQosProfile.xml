@@ -47,7 +47,7 @@
 				<resource_limits>
 					<type_object_max_serialized_length>131072</type_object_max_serialized_length>
 					<type_code_max_serialized_length>0</type_code_max_serialized_length>
-					<contentfilter_property_max_length>2048</contentfilter_property_max_length>
+					<contentfilter_property_max_length>6000</contentfilter_property_max_length>
 				</resource_limits>
 				<property>
 					<value>
