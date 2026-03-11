@@ -1,17 +1,11 @@
 from os import getenv
-from rticonnector.idl_types.Detection import CharSequence
 
 
-def str_to_char_sequence(str_input: str) -> list[int]:
-    return [ord(ch) for ch in str_input] if str_input is not None else []
+def string_to_char_sequence(s: str):
+    return list(s.encode("utf-8"))
 
-
-def char_sequence_to_str(char_sequence: CharSequence) -> str:
-    return ''.join([chr(c) for c in char_sequence if c]) if char_sequence is not None else ''
-
-
-def string_sequence_to_str_list(string_sequence: list[CharSequence]) -> list[str]:
-    return [char_sequence_to_str(string_struct.value) for string_struct in string_sequence]
+def char_sequence_to_string(seq):
+    return bytes(seq).decode("utf-8")
 
 
 def get_qos_file(qos_file_path: str) -> str:

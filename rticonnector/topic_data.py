@@ -1,13 +1,11 @@
 from enum import Enum
 
-from rticonnector.idl_types.Detection import P_Tactical_Sensor_PSM_C_Detection
-from rticonnector.idl_types.DetectionAps import P_Tactical_Sensor_PSM_C_Detection_Aps
-from rticonnector.idl_types.DetectionOptronics import P_Tactical_Sensor_PSM_C_Detection_Optronics
-from rticonnector.idl_types.Position import P_Navigation_PSM_C_Position
-from rticonnector.idl_types.ResourceSpecification import P_Maintenance_PSM_C_Resource_Specification
-from rticonnector.idl_types.RotMount import P_Mount_PSM_C_Rot_Mount
-from rticonnector.idl_types.TacticalSensor import P_Tactical_Sensor_PSM_C_Tactical_Sensor
-from rticonnector.idl_types.TacticalSensorSpecification import P_Tactical_Sensor_PSM_C_Tactical_Sensor_Specification
+from rticonnector.idl_types.Maintenance_PSM import P_Maintenance_PSM_C_Resource_Specification
+from rticonnector.idl_types.Mount_PSM import P_Mount_PSM_C_Rot_Mount
+from rticonnector.idl_types.Navigation_PSM import P_Navigation_PSM_C_Position
+from rticonnector.idl_types.Tactical_Sensor_PSM import P_Tactical_Sensor_PSM_C_Detection, \
+    P_Tactical_Sensor_PSM_C_Detection_Aps, P_Tactical_Sensor_PSM_C_Detection_Optronics, \
+    P_Tactical_Sensor_PSM_C_Tactical_Sensor, P_Tactical_Sensor_PSM_C_Tactical_Sensor_Specification
 
 
 class TopicEnum(Enum):
