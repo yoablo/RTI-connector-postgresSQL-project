@@ -14,7 +14,7 @@ from enum import IntEnum
 import sys
 import os
 
-from LDM_Common import *
+from rticonnector.idl_types.LDM_Common import *
 
 P_VideoTracking_PSM = idl.get_module("P_VideoTracking_PSM")
 
