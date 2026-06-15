@@ -1,9 +1,10 @@
 import queue
 import random
+import string
 import time
 from threading import Thread
 
-from sqlalchemy import create_engine, BigInteger, Integer, text
+from sqlalchemy import create_engine, BigInteger, Integer, text, String
 from sqlalchemy.orm import DeclarativeBase, Session
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -33,6 +34,7 @@ class DetectionRecord(Base):
     lsb: Mapped[int] = mapped_column(BigInteger)
 
     seconds: Mapped[int] = mapped_column(BigInteger)
+    class_name: Mapped[str] = mapped_column(String)
 
 
 Base.metadata.create_all(engine)
@@ -47,6 +49,7 @@ def save_to_database(detection):  # nanoseconds
     msb = detection.A_detectionUniqueID.A_msb
     lsb = detection.A_detectionUniqueID.A_lsb
     seconds = detection.A_timeOfDataGeneration.A_seconds
+    class_name = get_short_string(detection.A_detectionClassification)
 
     with Session(engine) as session:
         row_changed = False
@@ -56,11 +59,12 @@ def save_to_database(detection):  # nanoseconds
         for row in rows:
             if row.msb == msb and row.lsb == lsb:
                 # Change only this row
+                row.class_name = class_name
                 row.seconds = seconds
                 row_changed = True
 
         if not row_changed:
-            record = DetectionRecord(msb=msb, lsb=lsb, seconds=seconds)
+            record = DetectionRecord(msb=msb, lsb=lsb, seconds=seconds,class_name=class_name)
             session.add(record)
 
         session.commit()
@@ -80,7 +84,11 @@ def process_detections():
         except Empty:
             continue
 
-        # detection.A_timeOfDataGeneration.A_seconds = (time.time_ns() // 1_000_000_000)
+        if get_short_string(detection.A_detectionClassification) == "NOGA":
+            set_short_string(detection.A_detectionClassification, "ATR")
+
+        elif get_short_string(detection.A_detectionClassification) == "ATR" or get_short_string(detection.A_detectionClassification) == "WINDOAT":
+            set_short_string(detection.A_detectionClassification, "AT")
 
         save_to_database(detection)
 
@@ -100,6 +108,14 @@ def republish(pub):
 
         pub.publish(detection)
 
+def set_short_string(short_string, text):
+    short_string.value.clear()
+    short_string.value.extend(ord(c) for c in text)
+
+
+def get_short_string(short_string):
+    return ''.join(chr(x) for x in short_string.value)
+
 
 def simulate(pub, detection):
     print("Simulator thread started")
@@ -109,12 +125,11 @@ def simulate(pub, detection):
         detection.A_detectionUniqueID.A_msb = (random.choice(list(Random16DigitID)).value)
         detection.A_detectionUniqueID.A_lsb = (random.choice(list(Random16DigitID)).value)
         detection.A_timeOfDataGeneration.A_seconds = (time.time_ns() // 1_000_000_000)
+        set_short_string(detection.A_detectionClassification,random.choice(list(Classification_name)).value)
 
-        print(f"Simulating: "f"{detection.A_detectionUniqueID.A_msb}, "f"{detection.A_detectionUniqueID.A_lsb}")
+        print(f"Simulating: "f"{detection.A_detectionUniqueID.A_msb}, "f"{detection.A_detectionUniqueID.A_lsb}, "f"{get_short_string(detection.A_detectionClassification)}")
 
         pub.publish(detection)
-
-        time.sleep(2)
 
 
 class Random16DigitID(Enum):
@@ -124,6 +139,10 @@ class Random16DigitID(Enum):
     # num_4 = 5808496090508926
     # num_5 = 7368284097418089
 
+class Classification_name(Enum):
+    name_1 = "NOGA"
+    name_2 = "ATR"
+    name_3 = "WINDOAT"
 
 def main():
     topic = topic_data.TopicEnum.DETECTION
