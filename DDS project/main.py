@@ -1,6 +1,5 @@
 import queue
 import random
-import string
 import time
 from threading import Thread
 
@@ -49,7 +48,7 @@ def save_to_database(detection):  # nanoseconds
     msb = detection.A_detectionUniqueID.A_msb
     lsb = detection.A_detectionUniqueID.A_lsb
     seconds = detection.A_timeOfDataGeneration.A_seconds
-    class_name = get_short_string(detection.A_detectionClassification)
+    class_name = get_from_short_string(detection.A_detectionClassification)
 
     with Session(engine) as session:
         row_changed = False
@@ -73,22 +72,18 @@ def save_to_database(detection):  # nanoseconds
 def sub_message(topic_enum, detection):
     print(f"Received: " f"{detection.A_detectionUniqueID.A_msb}, " f"{detection.A_detectionUniqueID.A_lsb}")
     detection_queue.put(detection)
+    process_detections()
 
 
 def process_detections():
-    print("Processing thread started")
+    while not detection_queue.empty():
+        detection = detection_queue.get()
 
-    while True:
-        try:
-            detection = detection_queue.get(timeout=0.5)
-        except Empty:
-            continue
+        if get_from_short_string(detection.A_detectionClassification) == "NOGA":
+            set_string_to_short_string(detection.A_detectionClassification, "ATR")
 
-        if get_short_string(detection.A_detectionClassification) == "NOGA":
-            set_short_string(detection.A_detectionClassification, "ATR")
-
-        elif get_short_string(detection.A_detectionClassification) == "ATR" or get_short_string(detection.A_detectionClassification) == "WINDOAT":
-            set_short_string(detection.A_detectionClassification, "AT")
+        elif get_from_short_string(detection.A_detectionClassification) in ("ATR", "WINDOAT"):
+            set_string_to_short_string(detection.A_detectionClassification, "AT")
 
         save_to_database(detection)
 
@@ -108,39 +103,39 @@ def republish(pub):
 
         pub.publish(detection)
 
-def set_short_string(short_string, text):
+def set_string_to_short_string(short_string, text):
     short_string.value.clear()
     short_string.value.extend(ord(c) for c in text)
 
 
-def get_short_string(short_string):
+def get_from_short_string(short_string):
     return ''.join(chr(x) for x in short_string.value)
 
 
-def simulate(pub, detection):
+def simulate_publish(pub, detection):
     print("Simulator thread started")
 
     while True:
         detection = P_Tactical_Sensor_PSM_C_Detection()
-        detection.A_detectionUniqueID.A_msb = (random.choice(list(Random16DigitID)).value)
-        detection.A_detectionUniqueID.A_lsb = (random.choice(list(Random16DigitID)).value)
+        detection.A_detectionUniqueID.A_msb = (random.choice(list(Random_16_Digit_ID)).value)
+        detection.A_detectionUniqueID.A_lsb = (random.choice(list(Random_16_Digit_ID)).value)
         detection.A_timeOfDataGeneration.A_seconds = (time.time_ns() // 1_000_000_000)
-        set_short_string(detection.A_detectionClassification,random.choice(list(Classification_name)).value)
+        set_string_to_short_string(detection.A_detectionClassification,random.choice(list(random_classification_name)).value)
 
-        print(f"Simulating: "f"{detection.A_detectionUniqueID.A_msb}, "f"{detection.A_detectionUniqueID.A_lsb}, "f"{get_short_string(detection.A_detectionClassification)}")
+        print(f"Simulating: "f"{detection.A_detectionUniqueID.A_msb}, "f"{detection.A_detectionUniqueID.A_lsb}, "f"{get_from_short_string(detection.A_detectionClassification)}")
 
         pub.publish(detection)
 
 
-class Random16DigitID(Enum):
+class Random_16_Digit_ID(Enum):
     num_1 = 3001697090449141
     num_2 = 13533879590735665
     num_3 = 1691298520696870
     # num_4 = 5808496090508926
     # num_5 = 7368284097418089
 
-class Classification_name(Enum):
-    name_1 = "NOGA"
+class random_classification_name(Enum):
+    name_1 = "NOGA" 
     name_2 = "ATR"
     name_3 = "WINDOAT"
 
@@ -152,23 +147,23 @@ def main():
 
     pub = publisher.Publisher(topic, "rticonnector/Configuration/BarakQosProfile.xml")
 
-    simulator_thread = Thread(target=simulate, args=(pub, detection), daemon=True)
+    simulator_thread = Thread(target=simulate_publish, args=(pub, detection), daemon=True)
 
     subscriber_thread = Thread(target=sub.run, daemon=True)
 
-    processing_thread = Thread(target=process_detections, daemon=True)
+    # processing_thread = Thread(target=process_detections, daemon=True)
 
     republisher_thread = Thread(target=republish, args=(pub,), daemon=True)
 
     simulator_thread.start()
     # time.sleep(3)
     subscriber_thread.start()
-    processing_thread.start()
+    # processing_thread.start()
     republisher_thread.start()
 
     simulator_thread.join()
     subscriber_thread.join()
-    processing_thread.join()
+    # processing_thread.join()
     republisher_thread.join()
 
 
