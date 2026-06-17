@@ -135,7 +135,7 @@ class Random_16_Digit_ID(Enum):
     # num_5 = 7368284097418089
 
 class random_classification_name(Enum):
-    name_1 = "NOGA" 
+    name_1 = "NOGA"
     name_2 = "ATR"
     name_3 = "WINDOAT"
 
