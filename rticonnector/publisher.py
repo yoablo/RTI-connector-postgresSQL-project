@@ -1,3 +1,4 @@
+import threading
 from asyncio import run
 from threading import Thread
 import rti.connextdds as dds
@@ -14,9 +15,7 @@ class Publisher:
         self.topic_struct = topic_data_dict[topic_enum].topic_struct
         qos_provider = dds.QosProvider(get_qos_file(qos_file_path))
 
-        self.participant = dds.DomainParticipant(
-            domain_id, qos_provider.participant_qos
-        )
+        self.participant = dds.DomainParticipant(domain_id, qos_provider.participant_qos)
         publisher = dds.Publisher(self.participant, qos_provider.publisher_qos)
         topic = dds.Topic(
             self.participant,
@@ -24,13 +23,7 @@ class Publisher:
             self.topic_struct,
             qos_provider.topic_qos,
         )
-        self.writer_default = dds.DataWriter(
-            publisher,
-            topic,
-            qos_provider.datawriter_qos_from_profile(
-                PROFILE_NAME
-            ),
-        )
+        self.writer_default = dds.DataWriter(publisher, topic, qos_provider.datawriter_qos_from_profile(PROFILE_NAME))
 
     async def __run(self, struct_to_publish: idl_struct):
         self.writer_default.write(struct_to_publish)

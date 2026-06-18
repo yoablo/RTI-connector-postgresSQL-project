@@ -1,8 +1,8 @@
 from os import getenv
 
-
 def string_to_char_sequence(s: str):
     return list(s.encode("utf-8"))
+
 
 def char_sequence_to_string(seq):
     return bytes(seq).decode("utf-8")

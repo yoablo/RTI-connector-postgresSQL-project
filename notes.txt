@@ -1,0 +1,79 @@
+משימה:
+
+ליצור דרך הrticonnector אובייקטים של publisher ו subscriber שמתקשרים
+ אחד עם השני דרך topic של detection optronics שאותו אפשר למצוא בתוך הtopic_enum.
+כדי ליצור subscriber ו publisher תצטרך להזין את topic בצורה של
+ TOPICENUM.DETECTION_OPTRONICS כדי להצביע על הTOPIC שאליו אתה רוצה להירשם ולשלוח
+
+
+Tasks:
+
+1.
+    Create via the rticonnector publisher and subscriber objects that communicate
+    with each other via a topic of Optronics_detection that can be found in the topic_enum.
+    To create a subscriber and publisher you will need to enter the topic in the form you want to register
+     and send to the TOPIC (DDS), you then want to subscribe to TOPICENUM.DETECTION_OPTRONICS and get the value of
+     P_Tactical_Sensor_PSM_C_Detection_Optronics(), this needs to eventually be monitored in the rti connexts admin UI
+
+     #TODO DONE
+
+2.
+ change variables:
+    detection.A_sourceID.A_platformId = 1
+    detection.A_sourceID.A_systemId = 14
+    detection.A_sourceID.A_moduleId = 1
+
+    filter:
+    detection.A_sourceID.A_platformId = 1
+    detection.A_sourceID.A_systemId = 1
+    detection.A_sourceID.A_moduleId = 1
+
+ try to filter one to see the results:
+    detection.A_sourceID.A_platformId = 1
+    detection.A_sourceID.A_moduleId = 1
+
+    #TODO DONE
+
+3.
+
+    יש שדה כמו של source id שנקרא classification,
+     תסתכל במודל מידע תראה בדיוק איך כותבים אותו,
+      וברגע שאתה מקבל את האיתור בסובסקרייבר תשנה אותו לNoga
+     ואז תשים publisher queue ותראה שאתה מצליח להפיץ משהו ששינית אותו
+
+    "A_detectionClassification" in "P_Tactical_Sensor_PSM_C_Detection" which is on "Tactical_Sensor_PSM",
+    take the default, then change to 'noga', and see it changes mid code run
+
+    -check what value type is A_detectionClassification
+
+    pass pub to message, in order to put in into the queue
+
+    #TODO DONE
+
+4.
+     sql alchemy -  (download) PostgresSQL
+    (download) Pgadmin (see visual table)
+    #TODO: DONE
+
+5.
+    use pg admin to make a table of detections. make a function to CHOOSE a 32 digit A_detectionUniqueId's variable (16 of each of its 2 variables).
+    if A_detectionUniqueId's msb and lsb are the same as appears in the table, then update a variable of choice to its new parameter (A_timeOfDataGeneration > seconds)
+
+    Tactical_Sensor_PSM.py > P_Tactical_Sensor_PSM_C_Detection > A_detectionUniqueId > P_LDM_Common_T_Uuid(A_msb=0, A_lsb=0)
+
+    #TODO
+
+6.
+    notes for the comments on the last sql- rti project:
+
+    - time sleep in simulator make de-synchronization with the rest of the program #red
+    - the truely 16 digits randomizer wont remake same id's #red
+    - didtn understood "do it ATR AT and windcoat" #red
+        just changed :  (get_from_short_string(detection.A_detectionClassification) == classification_name.AT.value)
+        to : (get_from_short_string(detection.A_detectionClassification) == classification_name.AT.value and get_from_short_string(detection.A_detectionClassification) == classification_name.WINDOAT.value:)
+
+
+ points:
+- a queue needs to be in the 2 threads of the subscriber and publisher, otherwise the thread collapses
+- possible short string function: P_LDM_Common_T_VeryShortString, P_LDM_Common_T_ShortString
+
