@@ -1,7 +1,5 @@
 from enum import Enum
 
-
-
 class classification_name(Enum):
     NOGA = "NOGA"
     ATR = "ATR"
