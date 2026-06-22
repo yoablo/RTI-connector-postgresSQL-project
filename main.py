@@ -11,10 +11,11 @@ from rticonnector import publisher
 from rticonnector import subscriber
 from rticonnector import topic_data
 from rticonnector.idl_types.Tactical_Sensor_PSM import (P_Tactical_Sensor_PSM_C_Detection)
-from enum import Enum
 from queue import Empty
 import os
 from dotenv import load_dotenv
+from constants_2 import classification_name , Random_16_Digit_ID
+from publish_simulator import simulate_publish , set_string_to_short_string ,get_from_short_string
 
 load_dotenv()
 
@@ -84,11 +85,11 @@ def process_detections():
     while not detection_queue.empty():
         detection = detection_queue.get()
 
-        if get_from_short_string(detection.A_detectionClassification) == "NOGA":
-            set_string_to_short_string(detection.A_detectionClassification, "ATR")
+        if get_from_short_string(detection.A_detectionClassification) == classification_name.NOGA.value:
+            set_string_to_short_string(detection.A_detectionClassification, classification_name.ATR.value)
 
-        elif get_from_short_string(detection.A_detectionClassification) in ("ATR", "WINDOAT"):
-            set_string_to_short_string(detection.A_detectionClassification, "AT")
+        elif get_from_short_string(detection.A_detectionClassification) in (classification_name.ATR.value, classification_name.WINDOAT.value):
+            set_string_to_short_string(detection.A_detectionClassification, classification_name.AT.value)
 
         save_to_database(detection)
 
@@ -106,41 +107,33 @@ def republish(pub):
 
         print(f"Republishing: " f"{detection.A_detectionUniqueID.A_msb}, "f"{detection.A_detectionUniqueID.A_lsb}")
 
+        time.sleep(1)
         pub.publish(detection)
 
-def set_string_to_short_string(short_string, text):
-    short_string.value.clear()
-    short_string.value.extend(ord(c) for c in text)
 
 
-def get_from_short_string(short_string):
-    return ''.join(chr(x) for x in short_string.value)
+def random_id_or_enum():
+    if random.random() < 0.3:
+        returned_id = random.choice(list(Random_16_Digit_ID)).value
+    else:
+        returned_id = random.randint(1000000000000000,9999999999999999)
 
+    return returned_id
 
 def simulate_publish(pub, detection):
     print("Simulator thread started")
 
     while True:
         detection = P_Tactical_Sensor_PSM_C_Detection()
-        detection.A_detectionUniqueID.A_msb = (random.choice(list(Random_16_Digit_ID)).value)
-        detection.A_detectionUniqueID.A_lsb = (random.choice(list(Random_16_Digit_ID)).value)
+        detection.A_detectionUniqueID.A_msb = random_id_or_enum()
+        detection.A_detectionUniqueID.A_lsb = random_id_or_enum()
         detection.A_timeOfDataGeneration.A_seconds = (time.time_ns() // 1_000_000_000)
-        set_string_to_short_string(detection.A_detectionClassification,random.choice(list(random_classification_name)).value)
+        set_string_to_short_string(detection.A_detectionClassification,random.choice(list(classification_name)).value)
 
         print(f"Simulating: "f"{detection.A_detectionUniqueID.A_msb}, "f"{detection.A_detectionUniqueID.A_lsb}, "f"{get_from_short_string(detection.A_detectionClassification)}")
 
+        time.sleep(1)
         pub.publish(detection)
-
-
-class Random_16_Digit_ID(Enum):
-    num_1 = 3001697090449141
-    num_2 = 13533879590735665
-    num_3 = 1691298520696870
-
-class random_classification_name(Enum):
-    name_1 = "NOGA"
-    name_2 = "ATR"
-    name_3 = "WINDOAT"
 
 def main():
     topic = topic_data.TopicEnum.DETECTION
@@ -153,7 +146,6 @@ def main():
     simulator_thread = Thread(target=simulate_publish, args=(pub, detection), daemon=True)
 
     subscriber_thread = Thread(target=sub.run, daemon=True)
-
 
     republisher_thread = Thread(target=republish, args=(pub,), daemon=True)
 
