@@ -1,5 +1,5 @@
 from constants_2 import Random_16_Digit_ID , classification_name
-from random import random
+import random
 import time
 from rticonnector.idl_types.Tactical_Sensor_PSM import (P_Tactical_Sensor_PSM_C_Detection)
 
