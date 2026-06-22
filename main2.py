@@ -15,6 +15,7 @@ from queue import Empty
 import os
 from dotenv import load_dotenv
 from constants_2 import classification_name , Random_16_Digit_ID
+from publish_simulator import simulate_publish , set_string_to_short_string ,get_from_short_string
 
 load_dotenv()
 
@@ -109,13 +110,7 @@ def republish(pub):
         time.sleep(1)
         pub.publish(detection)
 
-def set_string_to_short_string(short_string, text):
-    short_string.value.clear()
-    short_string.value.extend(ord(character) for character in text)
 
-
-def get_from_short_string(short_string):
-    return ''.join(chr(num_character) for num_character in short_string.value)
 
 def random_id_or_enum():
     if random.random() < 0.3:
