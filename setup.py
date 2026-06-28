@@ -7,9 +7,6 @@ setup(
     package_data={
         "rticonnector": ["Configuration/BarakQosProfile.xml"],
     },
-    install_requires=[
-        "colorama",
-        "loguru",
-        "rti.connext",
-        "win32-setctime"
-    ],python_requires='>=3.9')
+    install_requires=["colorama", "loguru", "rti.connext", "win32-setctime"],
+    python_requires=">=3.9",
+)

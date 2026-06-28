@@ -7,9 +7,21 @@ from rticonnector import publisher, subscriber
 from queue import Empty
 import os
 from dotenv import load_dotenv
-from publish_simulator import simulate_publish, set_string_to_short_string, get_string_from_short_string
-from constants_2 import classification_name, delay_seconds, Base, DetectionRecord, qos_file, topic1, detection1, \
-    engine_string
+from publish_simulator import (
+    simulate_publish,
+    set_string_to_short_string,
+    get_string_from_short_string,
+)
+from constants_2 import (
+    classification_name,
+    delay_seconds,
+    Base,
+    DetectionRecord,
+    qos_file,
+    topic1,
+    detection1,
+    engine_string,
+)
 from rticonnector.idl_types.Tactical_Sensor_PSM import P_Tactical_Sensor_PSM_C_Detection
 from rticonnector.topic_data import TopicEnum
 
@@ -17,9 +29,12 @@ load_dotenv()
 
 detection_queue = queue.Queue()
 
+
 publish_queue = queue.Queue()
 
-database_url = os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/dds_project")
+database_url = os.getenv(
+    "DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/dds_project"
+)
 
 engine = create_engine(database_url)
 
@@ -48,14 +63,20 @@ def save_to_database(detection: P_Tactical_Sensor_PSM_C_Detection()):
                 row_changed = True
 
         if not row_changed:
-            record = DetectionRecord(msb=msb, lsb=lsb, seconds=seconds, class_name=class_name)
+            record = DetectionRecord(
+                msb=msb, lsb=lsb, seconds=seconds, class_name=class_name
+            )
             session.add(record)
 
         session.commit()
 
 
-def subcriber_message(topic_enum: TopicEnum.DETECTION, detection: P_Tactical_Sensor_PSM_C_Detection()):
-    print(f"Received: {detection.A_detectionUniqueID.A_msb}, {detection.A_detectionUniqueID.A_lsb}")
+def subcriber_message(
+    topic_enum: TopicEnum.DETECTION, detection: P_Tactical_Sensor_PSM_C_Detection()
+):
+    print(
+        f"Received: {detection.A_detectionUniqueID.A_msb}, {detection.A_detectionUniqueID.A_lsb}"
+    )
     detection_queue.put(detection)
     process_detections()
 
@@ -64,12 +85,21 @@ def process_detections():
     while not detection_queue.empty():
         detection = detection_queue.get()
 
-        if get_string_from_short_string(detection.A_detectionClassification) == classification_name.NOGA.value:
-            set_string_to_short_string(detection.A_detectionClassification, classification_name.ATR.value)
+        if (
+            get_string_from_short_string(detection.A_detectionClassification)
+            == classification_name.NOGA.value
+        ):
+            set_string_to_short_string(
+                detection.A_detectionClassification, classification_name.ATR.value
+            )
 
-        elif get_string_from_short_string(detection.A_detectionClassification) in (classification_name.ATR.value,
-                                                                                   classification_name.WINDOAT.value):
-            set_string_to_short_string(detection.A_detectionClassification, classification_name.AT.value)
+        elif get_string_from_short_string(detection.A_detectionClassification) in (
+            classification_name.ATR.value,
+            classification_name.WINDOAT.value,
+        ):
+            set_string_to_short_string(
+                detection.A_detectionClassification, classification_name.AT.value
+            )
 
         save_to_database(detection)
 
@@ -85,11 +115,13 @@ def publish(publisher):
         except Empty:
             continue
 
-        print(f"Republishing: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}")
+        print(
+            f"Republishing: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}"
+        )
 
         time.sleep(delay_seconds)
 
-        publisher.Publish(detection)
+        publisher.publish(detection)
 
 
 def main():
@@ -100,11 +132,13 @@ def main():
 
     publisher1 = publisher.Publisher(topic, qos_file)
 
-    simulator_thread = Thread(target=simulate_publish, args=(publisher1, detection), daemon=True)
+    simulator_thread = Thread(
+        target=simulate_publish, args=(publisher1, detection), daemon=True
+    )
 
     subscriber_thread = Thread(target=subscriber1.run, daemon=True)
 
-    publisher_thread = Thread(target=publish, args=(publisher,), daemon=True)
+    publisher_thread = Thread(target=publish, args=(publisher1,), daemon=True)
 
     simulator_thread.start()
     subscriber_thread.start()
