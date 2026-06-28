@@ -12,6 +12,4 @@ setup(
         "loguru",
         "rti.connext",
         "win32-setctime"
-    ],
-    python_requires='>=3.9'
-)
+    ],python_requires='>=3.9')
