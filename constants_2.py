@@ -4,15 +4,15 @@ from sqlalchemy import BigInteger, Integer, String
 from rticonnector import topic_data
 from rticonnector.idl_types.Tactical_Sensor_PSM import P_Tactical_Sensor_PSM_C_Detection
 
-delay_seconds = 1
-nanoseconds_conversion_to_seconds = 1_000_000_000
-truely_random_16_digit_ID_start_var = 1000000000000000
-truely_random_16_digit_ID_end_var = 9999999999999999
-qos_file = "rticonnector/Configuration/BarakQosProfile.xml"
-topic1 = topic_data.TopicEnum.DETECTION
-detection1 = P_Tactical_Sensor_PSM_C_Detection()
-chance_for_ID = 0.5
-engine_string = "TRUNCATE TABLE detections RESTART IDENTITY"
+DELAY_SECONDS = 1
+NANOSECONDS_CONVERSION_TO_SECONDS = 1_000_000_000
+TRUELY_RANDOM_16_DIGIT_ID_START_VAR = 1000000000000000
+TRUELY_RANDOM_16_DIGIT_ID_END_VAR = 9999999999999999
+QOS_FILE = "rticonnector/Configuration/BarakQosProfile.xml"
+TOPIC1 = topic_data.TopicEnum.DETECTION
+DETECTION1 = P_Tactical_Sensor_PSM_C_Detection()
+CHANCE_FOR_ID = 0.5
+ENGINE_STRING = "TRUNCATE TABLE detections RESTART IDENTITY"
 
 
 class classification_name(Enum):

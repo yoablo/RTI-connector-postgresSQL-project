@@ -1,11 +1,11 @@
 from constants_2 import (
     Random_16_Digit_ID,
     classification_name,
-    delay_seconds,
-    nanoseconds_conversion_to_seconds,
-    truely_random_16_digit_ID_start_var,
-    truely_random_16_digit_ID_end_var,
-    chance_for_ID,
+    DELAY_SECONDS,
+    NANOSECONDS_CONVERSION_TO_SECONDS,
+    TRUELY_RANDOM_16_DIGIT_ID_START_VAR,
+    TRUELY_RANDOM_16_DIGIT_ID_END_VAR,
+    CHANCE_FOR_ID,
 )
 import random
 import time
@@ -32,7 +32,7 @@ def simulate_publish(pub: object, detection: object):
         detection.A_detectionUniqueID.A_lsb = choose_random_id_or_enum()
 
         detection.A_timeOfDataGeneration.A_seconds = (
-            time.time_ns() // nanoseconds_conversion_to_seconds
+            time.time_ns() // NANOSECONDS_CONVERSION_TO_SECONDS
         )
 
         set_string_to_short_string(
@@ -44,16 +44,16 @@ def simulate_publish(pub: object, detection: object):
             f"Simulating: {detection.A_detectionUniqueID.A_msb}, {detection.A_detectionUniqueID.A_lsb}, {get_string_from_short_string(detection.A_detectionClassification)}"
         )
 
-        time.sleep(delay_seconds)
+        time.sleep(DELAY_SECONDS)
         pub.publish(detection)
 
 
 def choose_random_id_or_enum():
-    if random.random() < chance_for_ID:
+    if random.random() < CHANCE_FOR_ID:
         returned_id = random.choice(list(Random_16_Digit_ID)).value
     else:
         returned_id = random.randint(
-            truely_random_16_digit_ID_start_var, truely_random_16_digit_ID_end_var
+            TRUELY_RANDOM_16_DIGIT_ID_START_VAR, TRUELY_RANDOM_16_DIGIT_ID_END_VAR
         )
 
     return returned_id

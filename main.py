@@ -14,13 +14,13 @@ from publish_simulator import (
 )
 from constants_2 import (
     classification_name,
-    delay_seconds,
+    DELAY_SECONDS,
     Base,
     DetectionRecord,
-    qos_file,
-    topic1,
-    detection1,
-    engine_string,
+    QOS_FILE,
+    TOPIC1,
+    DETECTION1,
+    ENGINE_STRING,
 )
 from rticonnector.idl_types.Tactical_Sensor_PSM import P_Tactical_Sensor_PSM_C_Detection
 from rticonnector.topic_data import TopicEnum
@@ -41,7 +41,7 @@ engine = create_engine(database_url)
 Base.metadata.create_all(engine)
 
 with engine.connect() as conn:
-    conn.execute(text(engine_string))
+    conn.execute(text(ENGINE_STRING))
     conn.commit()
 
 
@@ -119,18 +119,18 @@ def publish(publisher):
             f"Republishing: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}"
         )
 
-        time.sleep(delay_seconds)
+        time.sleep(DELAY_SECONDS)
 
         publisher.publish(detection)
 
 
 def main():
-    topic = topic1
-    detection = detection1
+    topic = TOPIC1
+    detection = DETECTION1
 
-    subscriber1 = subscriber.Subscriber(topic, subcriber_message, "", qos_file)
+    subscriber1 = subscriber.Subscriber(topic, subcriber_message, "", QOS_FILE)
 
-    publisher1 = publisher.Publisher(topic, qos_file)
+    publisher1 = publisher.Publisher(topic, QOS_FILE)
 
     simulator_thread = Thread(
         target=simulate_publish, args=(publisher1, detection), daemon=True
