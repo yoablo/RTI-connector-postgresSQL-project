@@ -1,43 +1,26 @@
 import queue
-import time
+from queue import Empty
 from threading import Thread
+import time
+
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
-from rticonnector import publisher, subscriber
-from queue import Empty
-import os
-from dotenv import load_dotenv
-from publish_simulator import (
-    simulate_publish,
-    set_string_to_short_string,
-    get_string_from_short_string,
-)
-from constants_2 import (
-    classification_name,
-    DELAY_SECONDS,
-    Base,
-    DetectionRecord,
-    QOS_FILE,
-    TOPIC1,
-    DETECTION1,
-    ENGINE_STRING,
-)
+
 from rticonnector.idl_types.Tactical_Sensor_PSM import P_Tactical_Sensor_PSM_C_Detection
 from rticonnector.topic_data import TopicEnum
+from rticonnector.publisher import Publisher
+from rticonnector.subscriber import Subscriber
+from rticonnector.utils import char_sequence_to_string, string_to_char_sequence
 
-load_dotenv()
+from publish_simulator import simulate_publish
+from constants_2 import DELAY_SECONDS, QOS_FILE, TOPIC_DETECTION, DETECTION, \
+    ENGINE_STRING, DATABASE_URL
+from classes_file import ClassificationName, Base, DetectionRecord
 
 detection_queue = queue.Queue()
-
-
 publish_queue = queue.Queue()
 
-database_url = os.getenv(
-    "DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/dds_project"
-)
-
-engine = create_engine(database_url)
-
+engine = create_engine(DATABASE_URL)
 Base.metadata.create_all(engine)
 
 with engine.connect() as conn:
@@ -45,15 +28,14 @@ with engine.connect() as conn:
     conn.commit()
 
 
-def save_to_database(detection: P_Tactical_Sensor_PSM_C_Detection()):
+def save_to_database(detection: P_Tactical_Sensor_PSM_C_Detection):
     msb = detection.A_detectionUniqueID.A_msb
     lsb = detection.A_detectionUniqueID.A_lsb
     seconds = detection.A_timeOfDataGeneration.A_seconds
-    class_name = get_string_from_short_string(detection.A_detectionClassification)
+    class_name = char_sequence_to_string(detection.A_detectionClassification.value)
 
     with Session(engine) as session:
         row_changed = False
-
         rows = session.query(DetectionRecord).all()
 
         for row in rows:
@@ -63,20 +45,14 @@ def save_to_database(detection: P_Tactical_Sensor_PSM_C_Detection()):
                 row_changed = True
 
         if not row_changed:
-            record = DetectionRecord(
-                msb=msb, lsb=lsb, seconds=seconds, class_name=class_name
-            )
+            record = DetectionRecord(msb = msb, lsb = lsb, seconds = seconds, class_name = class_name)
             session.add(record)
 
         session.commit()
 
 
-def subcriber_message(
-    topic_enum: TopicEnum.DETECTION, detection: P_Tactical_Sensor_PSM_C_Detection()
-):
-    print(
-        f"Received: {detection.A_detectionUniqueID.A_msb}, {detection.A_detectionUniqueID.A_lsb}"
-    )
+def subscriber_message(topic_enum: TopicEnum, detection: P_Tactical_Sensor_PSM_C_Detection):
+    print(f"Received: {detection.A_detectionUniqueID.A_msb}, {detection.A_detectionUniqueID.A_lsb}")
     detection_queue.put(detection)
     process_detections()
 
@@ -85,28 +61,18 @@ def process_detections():
     while not detection_queue.empty():
         detection = detection_queue.get()
 
-        if (
-            get_string_from_short_string(detection.A_detectionClassification)
-            == classification_name.NOGA.value
+        if char_sequence_to_string(detection.A_detectionClassification.value) == ClassificationName.NOGA.value:
+            detection.A_detectionClassification.value = string_to_char_sequence(ClassificationName.ATR.value)
+        elif char_sequence_to_string(detection.A_detectionClassification.value) in (
+                ClassificationName.ATR.value, ClassificationName.WINDOAT.value
         ):
-            set_string_to_short_string(
-                detection.A_detectionClassification, classification_name.ATR.value
-            )
-
-        elif get_string_from_short_string(detection.A_detectionClassification) in (
-            classification_name.ATR.value,
-            classification_name.WINDOAT.value,
-        ):
-            set_string_to_short_string(
-                detection.A_detectionClassification, classification_name.AT.value
-            )
+            detection.A_detectionClassification.value = string_to_char_sequence(ClassificationName.AT.value)
 
         save_to_database(detection)
-
         publish_queue.put(detection)
 
 
-def publish(publisher):
+def publish(publisher: Publisher):
     print("Republisher thread started")
 
     while True:
@@ -115,30 +81,23 @@ def publish(publisher):
         except Empty:
             continue
 
-        print(
-            f"Republishing: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}"
-        )
+        print(f"Republishing: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}")
 
         time.sleep(DELAY_SECONDS)
-
         publisher.publish(detection)
 
 
 def main():
-    topic = TOPIC1
-    detection = DETECTION1
+    topic = TOPIC_DETECTION
+    detection = DETECTION
 
-    subscriber1 = subscriber.Subscriber(topic, subcriber_message, "", QOS_FILE)
+    subscriber_object = Subscriber(topic, subscriber_message, "", QOS_FILE)
+    publisher_object = Publisher(topic, QOS_FILE)
+    simulator_publisher_object = Publisher(topic, QOS_FILE)
 
-    publisher1 = publisher.Publisher(topic, QOS_FILE)
-
-    simulator_thread = Thread(
-        target=simulate_publish, args=(publisher1, detection), daemon=True
-    )
-
-    subscriber_thread = Thread(target=subscriber1.run, daemon=True)
-
-    publisher_thread = Thread(target=publish, args=(publisher1,), daemon=True)
+    simulator_thread = Thread(target = simulate_publish, args = (simulator_publisher_object, detection), daemon = True)
+    subscriber_thread = Thread(target = subscriber_object.run, daemon = True)
+    publisher_thread = Thread(target = publish, args = (publisher_object,), daemon = True)
 
     simulator_thread.start()
     subscriber_thread.start()
