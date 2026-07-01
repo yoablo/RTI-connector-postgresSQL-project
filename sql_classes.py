@@ -1,20 +1,5 @@
-from enum import Enum
-
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import BigInteger, Integer, String
-
-
-class ClassificationName(Enum):
-    NOGA = "NOGA"
-    ATR = "ATR"
-    WINDOAT = "WINDOAT"
-    AT = "AT"
-
-
-class Random16DigitID(Enum):
-    ONE_NUMBER = 3001697090449141
-    SECOND_NUMBER = 13533879590735665
-    THIRD_NUMBER = 1691298520696870
 
 
 class Base(DeclarativeBase):

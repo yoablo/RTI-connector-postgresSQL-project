@@ -13,9 +13,9 @@ from rticonnector.subscriber import Subscriber
 from rticonnector.utils import char_sequence_to_string, string_to_char_sequence
 
 from publish_simulator import simulate_publish
-from constants_2 import DELAY_SECONDS, QOS_FILE, TOPIC_DETECTION, DETECTION, \
-    ENGINE_STRING, DATABASE_URL
-from classes_file import ClassificationName, Base, DetectionRecord
+from constants import DELAY_SECONDS, QOS_FILE, DETECTION, \
+    ENGINE_STRING, DATABASE_URL, ClassificationName
+from sql_classes import  Base, DetectionRecord
 
 detection_queue = queue.Queue()
 publish_queue = queue.Queue()
@@ -88,7 +88,7 @@ def publish(publisher: Publisher):
 
 
 def main():
-    topic = TOPIC_DETECTION
+    topic = TopicEnum.DETECTION
     detection = DETECTION
 
     subscriber_object = Subscriber(topic, subscriber_message, "", QOS_FILE)

@@ -7,10 +7,8 @@ from rticonnector.utils import char_sequence_to_string, string_to_char_sequence
 
 from sqlalchemy import BigInteger
 
-from constants_2 import DELAY_SECONDS, NANOSECONDS_CONVERSION_TO_SECONDS, \
-    TRUELY_RANDOM_16_DIGIT_ID_START_VAR, TRUELY_RANDOM_16_DIGIT_ID_END_VAR, CHANCE_FOR_ID
-from classes_file import Random16DigitID, ClassificationName
-
+from constants import DELAY_SECONDS, NANOSECONDS_CONVERSION_TO_SECONDS, \
+    TRUELY_RANDOM_16_DIGIT_ID_START_VAR, TRUELY_RANDOM_16_DIGIT_ID_END_VAR, CHANCE_FOR_ID, Random16DigitID, ClassificationName
 
 def simulate_publish(publisher: Publisher, detection: P_Tactical_Sensor_PSM_C_Detection):
     print("Simulator thread started")
