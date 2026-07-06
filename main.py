@@ -1,7 +1,8 @@
-import queue
+# import queue
 from queue import Empty
 from threading import Thread
 import time
+import pickle
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
@@ -14,11 +15,12 @@ from rticonnector.utils import char_sequence_to_string, string_to_char_sequence
 
 from publish_simulator import simulate_publish
 from constants import DELAY_SECONDS, QOS_FILE, DETECTION, \
-    ENGINE_STRING, DATABASE_URL, ClassificationName
-from sql_classes import  Base, DetectionRecord
+    ENGINE_STRING, DATABASE_URL, ClassificationName, SUBSCRIBER_FILTER, REDIS_CLIENT
+from sql_classes import Base, DetectionRecord
 
-detection_queue = queue.Queue()
-publish_queue = queue.Queue()
+# detection_queue = queue.Queue()
+# publish_queue = queue.Queue()
+redis_client = REDIS_CLIENT
 
 engine = create_engine(DATABASE_URL)
 Base.metadata.create_all(engine)
@@ -53,33 +55,36 @@ def save_to_database(detection: P_Tactical_Sensor_PSM_C_Detection):
 
 def subscriber_message(topic_enum: TopicEnum, detection: P_Tactical_Sensor_PSM_C_Detection):
     print(f"Received: {detection.A_detectionUniqueID.A_msb}, {detection.A_detectionUniqueID.A_lsb}")
-    detection_queue.put(detection)
+    redis_client.rpush("latest_detection", pickle.dumps(detection))
+    #detection_queue.put(detection)
     process_detections()
 
 
 def process_detections():
-    while not detection_queue.empty():
-        detection = detection_queue.get()
+    _, raw = redis_client.blpop("latest_detection")
+
+    if raw is not None:
+        detection = pickle.loads(raw)
 
         if char_sequence_to_string(detection.A_detectionClassification.value) == ClassificationName.NOGA.value:
             detection.A_detectionClassification.value = string_to_char_sequence(ClassificationName.ATR.value)
         elif char_sequence_to_string(detection.A_detectionClassification.value) in (
-                ClassificationName.ATR.value, ClassificationName.WINDOAT.value
+                ClassificationName.ATR.value, ClassificationName.WINCOAT.value
         ):
             detection.A_detectionClassification.value = string_to_char_sequence(ClassificationName.AT.value)
 
         save_to_database(detection)
-        publish_queue.put(detection)
+        redis_client.rpush("latest_publish", pickle.dumps(detection))
 
 
 def publish(publisher: Publisher):
     print("Republisher thread started")
 
-    while True:
-        try:
-            detection = publish_queue.get()
-        except Empty:
-            continue
+
+    _, raw = redis_client.blpop("latest_publish")
+
+    if raw is not None:
+        detection = pickle.loads(raw)
 
         print(f"Republishing: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}")
 
@@ -90,8 +95,9 @@ def publish(publisher: Publisher):
 def main():
     topic = TopicEnum.DETECTION
     detection = DETECTION
+    subscriber_filter = SUBSCRIBER_FILTER
 
-    subscriber_object = Subscriber(topic, subscriber_message, "", QOS_FILE)
+    subscriber_object = Subscriber(topic, subscriber_message, subscriber_filter, QOS_FILE)
     publisher_object = Publisher(topic, QOS_FILE)
     simulator_publisher_object = Publisher(topic, QOS_FILE)
 
