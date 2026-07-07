@@ -13,7 +13,7 @@ from rticonnector.subscriber import Subscriber
 from rticonnector.utils import char_sequence_to_string, string_to_char_sequence
 
 from publish_simulator import simulate_publish
-from constants import DELAY_SECONDS, QOS_FILE, DETECTION, \
+from constants import DELAY_SECONDS, QOS_FILE, \
     ENGINE_STRING, DATABASE_URL, ClassificationName
 from sql_classes import  Base, DetectionRecord
 
@@ -89,7 +89,7 @@ def publish(publisher: Publisher):
 
 def main():
     topic = TopicEnum.DETECTION
-    detection = DETECTION
+    detection = P_Tactical_Sensor_PSM_C_Detection()
 
     subscriber_object = Subscriber(topic, subscriber_message, "", QOS_FILE)
     publisher_object = Publisher(topic, QOS_FILE)
