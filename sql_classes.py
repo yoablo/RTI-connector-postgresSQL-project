@@ -1,5 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import BigInteger, Integer, String
+from sqlalchemy import BigInteger, Integer, String, Boolean
 
 
 class Base(DeclarativeBase):
@@ -15,3 +15,4 @@ class DetectionRecord(Base):
     lsb: Mapped[int] = mapped_column(BigInteger)
     seconds: Mapped[int] = mapped_column(BigInteger)
     class_name: Mapped[str] = mapped_column(String)
+    is_published: Mapped[bool] = mapped_column(Boolean)

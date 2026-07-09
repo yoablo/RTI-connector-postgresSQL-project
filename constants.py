@@ -1,10 +1,6 @@
 from dotenv import load_dotenv
-import os
-
+from os import getenv
 from enum import Enum
-
-from rticonnector.idl_types.Tactical_Sensor_PSM import P_Tactical_Sensor_PSM_C_Detection
-
 from redis import Redis
 
 load_dotenv()
@@ -14,13 +10,17 @@ NANOSECONDS_CONVERSION_TO_SECONDS = 1_000_000_000
 TRUELY_RANDOM_16_DIGIT_ID_START_VAR = 1000000000000000
 TRUELY_RANDOM_16_DIGIT_ID_END_VAR = 9999999999999999
 QOS_FILE = "rticonnector/Configuration/BarakQosProfile.xml"
-DETECTION = P_Tactical_Sensor_PSM_C_Detection()
 CHANCE_FOR_ID = 0.5
 ENGINE_STRING = "TRUNCATE TABLE detections RESTART IDENTITY"
 DATABASE_URL_DEFAULT = "postgresql+psycopg2://postgres:postgres@localhost:5432/dds_project"
-DATABASE_URL = os.getenv("DATABASE_URL", DATABASE_URL_DEFAULT)
-# SUBSCRIBER_FILTER = "A_detectionClassification.value == 'WINDCOAT' OR A_detectionClassification.value == 'AT'" #check using enum
-SUBSCRIBER_FILTER = "" #check using enum
+DATABASE_URL = getenv("DATABASE_URL", DATABASE_URL_DEFAULT)
+DEFAULT_SYSTEM_MOD_VARIABLE = 1
+DETECTION_SOURCEID_PLATFORMID = 1
+DETECTION_SOURCEID_SYSTEMID = 14
+DETECTION_SOURCEID_MODULEID = 9
+FASPTAPI_SERVER_HOST = "127.0.0.1"
+FASPTAPI_SERVER_PORT = 8000
+WHAT_SYSTEM_MOD_VARIABLE_FILTERS = 0
 REDIS_CLIENT = Redis(
     host = "localhost",
     port = 6379,
@@ -31,7 +31,7 @@ REDIS_CLIENT = Redis(
 class ClassificationName(Enum):
     NOGA = "NOGA"
     ATR = "ATR"
-    WINCOAT = "WINCOAT"
+    WINDCOAT = "WINDCOAT"
     AT = "AT"
 
 
@@ -39,4 +39,3 @@ class Random16DigitID(Enum):
     ONE_NUMBER = 3001697090449141
     SECOND_NUMBER = 13533879590735665
     THIRD_NUMBER = 1691298520696870
-
