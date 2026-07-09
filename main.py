@@ -16,9 +16,9 @@ from publish_simulator import simulate_publish
 from constants import DELAY_SECONDS, QOS_FILE, ENGINE_STRING, DATABASE_URL, ClassificationName, REDIS_CLIENT, \
     DETECTION_SOURCEID_PLATFORMID, DETECTION_SOURCEID_MODULEID, DETECTION_SOURCEID_SYSTEMID, FASPTAPI_SERVER_HOST, \
     FASPTAPI_SERVER_PORT, WHAT_SYSTEM_MOD_VARIABLE_FILTERS
-from sql_classes import Base, DetectionRecord
 from fastAPI_chrome_control_panel import app as chrome_control_panel_app
 from uvicorn import run as uvicorn_run
+from sql_classes import  Base, DetectionRecord
 
 publish_queue = Queue()
 redis_client = REDIS_CLIENT
