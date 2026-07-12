@@ -150,4 +150,3 @@ def start_fasptAPI_control_panel():
 if __name__ == "__main__":
     Thread(target = start_fasptAPI_control_panel, daemon = True).start()
     main()
-    # prntype(P_Tactical_Sensor_PSM_C_Detection().A_sourceID)
