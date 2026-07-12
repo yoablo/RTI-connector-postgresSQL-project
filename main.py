@@ -6,6 +6,7 @@ from pickle import dumps, loads
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
+from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
 from rticonnector.idl_types.Tactical_Sensor_PSM import P_Tactical_Sensor_PSM_C_Detection
 from rticonnector.topic_data import TopicEnum
 from rticonnector.publisher import Publisher
@@ -15,10 +16,10 @@ from rticonnector.utils import char_sequence_to_string, string_to_char_sequence
 from publish_simulator import simulate_publish
 from constants import DELAY_SECONDS, QOS_FILE, ENGINE_STRING, DATABASE_URL, ClassificationName, REDIS_CLIENT, \
     DETECTION_SOURCEID_PLATFORMID, DETECTION_SOURCEID_MODULEID, DETECTION_SOURCEID_SYSTEMID, FASPTAPI_SERVER_HOST, \
-    FASPTAPI_SERVER_PORT, WHAT_SYSTEM_MOD_VARIABLE_FILTERS
+    FASPTAPI_SERVER_PORT, CHOSEN_SYSTEM_MOD_VARIABLE_FILTERS
 from fastAPI_chrome_control_panel import app as chrome_control_panel_app
 from uvicorn import run as uvicorn_run
-from sql_classes import  Base, DetectionRecord
+from sql_classes import Base, DetectionRecord
 
 publish_queue = Queue()
 redis_client = REDIS_CLIENT
@@ -48,24 +49,22 @@ def save_to_database(detection: P_Tactical_Sensor_PSM_C_Detection, is_published:
                 row_changed = True
 
         if not row_changed:
-            record = DetectionRecord(msb = msb, lsb = lsb, seconds = seconds, class_name = class_name,
-                                     is_published = is_published)
+            record = DetectionRecord(msb, lsb, seconds, class_name, is_published)
             session.add(record)
 
         session.commit()
 
 
 def subscriber_message(topic_enum: TopicEnum, detection: P_Tactical_Sensor_PSM_C_Detection):
-    print(
+    log_code(
         f"Received: {detection.A_detectionUniqueID.A_msb}, {detection.A_detectionUniqueID.A_lsb},{char_sequence_to_string(detection.A_detectionClassification.value)}")
     redis_client.rpush("latest_detection", dumps(detection))
     process_detections()
 
 
 def publisher_filter(detection: P_Tactical_Sensor_PSM_C_Detection):
-    return char_sequence_to_string(
-        detection.A_detectionClassification.value) == ClassificationName.WINDCOAT.value or char_sequence_to_string(
-        detection.A_detectionClassification.value) == ClassificationName.AT.value
+    classification = char_sequence_to_string(detection.A_detectionClassification.value)
+    return classification == ClassificationName.WINDCOAT.value or classification == ClassificationName.AT.value
 
 
 def process_detections():
@@ -82,24 +81,24 @@ def process_detections():
         ):
             detection.A_detectionClassification.value = string_to_char_sequence(ClassificationName.AT.value)
 
-        if int(redis_client.get("system_mod_variable")) != WHAT_SYSTEM_MOD_VARIABLE_FILTERS or publisher_filter(detection):
-            detection.A_sourceID.A_platformId = DETECTION_SOURCEID_PLATFORMID
-            detection.A_sourceID.A_systemId = DETECTION_SOURCEID_MODULEID
-            detection.A_sourceID.A_moduleId = DETECTION_SOURCEID_SYSTEMID
-            print(
+        if int(redis_client.get("system_mod_variable")) != CHOSEN_SYSTEM_MOD_VARIABLE_FILTERS or publisher_filter(
+                detection):
+            detection.A_sourceID = P_LDM_Common_T_Identifier(DETECTION_SOURCEID_PLATFORMID, DETECTION_SOURCEID_SYSTEMID,
+                                                             DETECTION_SOURCEID_MODULEID)
+            log_code(
                 f"!!!!! changed source ID to: {detection.A_sourceID.A_platformId}.{detection.A_sourceID.A_systemId}.{detection.A_sourceID.A_moduleId}")
 
             publish_queue.put(detection)
             is_published = True
         else:
-            print(
+            log_code(
                 f"!!!!! no change: {detection.A_sourceID.A_platformId}.{detection.A_sourceID.A_systemId}.{detection.A_sourceID.A_moduleId}")
 
         save_to_database(detection, is_published)
 
 
 def publish(publisher: Publisher):
-    print("Republisher thread started")
+    log_code("publisher thread started")
 
     while True:
         try:
@@ -107,8 +106,8 @@ def publish(publisher: Publisher):
         except Empty:
             continue
 
-        print(
-            f"Republishing: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}, {detection.A_sourceID}")
+        log_code(
+            f"publishing: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}, {detection.A_sourceID}")
 
         sleep(DELAY_SECONDS)
         publisher.publish(detection)
@@ -116,6 +115,10 @@ def publish(publisher: Publisher):
 
 def filter_char_sequence_with_string(detection_parameter_name: str, word: str):
     return " AND ".join(f"{detection_parameter_name}[{i}] = '{char}'" for i, char in enumerate(word))
+
+
+def log_code(log_string: str):
+    print(log_string)
 
 
 def main():
@@ -147,3 +150,4 @@ def start_fasptAPI_control_panel():
 if __name__ == "__main__":
     Thread(target = start_fasptAPI_control_panel, daemon = True).start()
     main()
+    # prntype(P_Tactical_Sensor_PSM_C_Detection().A_sourceID)

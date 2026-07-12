@@ -1,14 +1,18 @@
 from fastapi import FastAPI
 
-from constants import REDIS_CLIENT
+from constants import REDIS_CLIENT , FastAPIConstants , DEFAULT_SYSTEM_MOD_VARIABLE
 
 app = FastAPI()
+
+REDIS_CLIENT.set("system_mod_variable",DEFAULT_SYSTEM_MOD_VARIABLE)
 
 
 @app.post("/toggle")
 def toggle():
-    value = int(REDIS_CLIENT.get("system_mod_variable"))
-    value = 1 - value
-    REDIS_CLIENT.set("system_mod_variable", value)
-
-    return {"system_mod_variable": value}
+    if int(REDIS_CLIENT.get("system_mod_variable")) == FastAPIConstants.ALL_DETECTIONS.value:
+        REDIS_CLIENT.set("system_mod_variable", FastAPIConstants.CRITICAL_DETECTIONS.value)
+        system_state = "critical detections"
+    else:
+        REDIS_CLIENT.set("system_mod_variable", FastAPIConstants.ALL_DETECTIONS.value)
+        system_state = "all detections"
+    return system_state
