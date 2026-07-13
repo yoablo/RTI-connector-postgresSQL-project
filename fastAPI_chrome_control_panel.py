@@ -1,18 +1,26 @@
 from fastapi import FastAPI
 
-from constants import REDIS_CLIENT , FastAPIConstants , DEFAULT_SYSTEM_MOD_VARIABLE
+from constants import  SystemStateConstants, DEFAULT_SYSTEM_MOD_VARIABLE, SYSTEM_MOD_VARIABLE
+from redis_utils import get_redis_system_state, set_redis_system_state
 
 app = FastAPI()
 
-REDIS_CLIENT.set("system_mod_variable",DEFAULT_SYSTEM_MOD_VARIABLE)
+set_redis_system_state(SYSTEM_MOD_VARIABLE, DEFAULT_SYSTEM_MOD_VARIABLE)
 
 
 @app.post("/toggle")
 def toggle():
-    if int(REDIS_CLIENT.get("system_mod_variable")) == FastAPIConstants.ALL_DETECTIONS.value:
-        REDIS_CLIENT.set("system_mod_variable", FastAPIConstants.CRITICAL_DETECTIONS.value)
-        system_state = "critical detections"
+    if get_redis_system_state() == SystemStateConstants.ALL_DETECTIONS.value:
+        set_redis_system_state(SYSTEM_MOD_VARIABLE, SystemStateConstants.CRITICAL_DETECTIONS.value)
     else:
-        REDIS_CLIENT.set("system_mod_variable", FastAPIConstants.ALL_DETECTIONS.value)
-        system_state = "all detections"
-    return system_state
+        set_redis_system_state(SYSTEM_MOD_VARIABLE, SystemStateConstants.ALL_DETECTIONS.value)
+
+    return get_system_state()
+
+
+@app.get("/get_system_state")
+def get_system_state():
+    if get_redis_system_state() == SystemStateConstants.CRITICAL_DETECTIONS.value:
+        return "critical detections"
+    else:
+        return "all detections"

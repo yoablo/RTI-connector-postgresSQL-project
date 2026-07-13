@@ -5,6 +5,7 @@ from redis import Redis
 
 load_dotenv()
 
+
 class ClassificationName(Enum):
     NOGA = "NOGA"
     ATR = "ATR"
@@ -17,9 +18,11 @@ class Random16DigitID(Enum):
     SECOND_NUMBER = 13533879590735665
     THIRD_NUMBER = 1691298520696870
 
-class FastAPIConstants(Enum):
+
+class SystemStateConstants(Enum):
     ALL_DETECTIONS = 0
     CRITICAL_DETECTIONS = 1
+
 
 DELAY_SECONDS = 1
 NANOSECONDS_CONVERSION_TO_SECONDS = 1_000_000_000
@@ -28,19 +31,22 @@ TRUELY_RANDOM_16_DIGIT_ID_END_VAR = 9999999999999999
 QOS_FILE = "rticonnector/Configuration/BarakQosProfile.xml"
 CHANCE_FOR_ID = 0.5
 ENGINE_STRING = "TRUNCATE TABLE detections RESTART IDENTITY"
-DATABASE_URL_DEFAULT = "postgresql+psycopg2://postgres:postgres@localhost:5432/dds_project"
+
+DB_HOST = getenv("DB_HOST", "localhost")
+DB_PORT = getenv("DB_PORT", "5432")
+DATABASE_URL_DEFAULT = f"postgresql+psycopg2://postgres:postgres@{DB_HOST}:{DB_PORT}/dds_project"
 DATABASE_URL = getenv("DATABASE_URL", DATABASE_URL_DEFAULT)
-DEFAULT_SYSTEM_MOD_VARIABLE = FastAPIConstants.CRITICAL_DETECTIONS.value
+
+SYSTEM_MOD_VARIABLE = "system_mod_variable"
+DEFAULT_SYSTEM_MOD_VARIABLE = SystemStateConstants.CRITICAL_DETECTIONS.value
 DETECTION_SOURCEID_PLATFORMID = 1
 DETECTION_SOURCEID_SYSTEMID = 14
 DETECTION_SOURCEID_MODULEID = 9
 FASPTAPI_SERVER_HOST = "127.0.0.1"
 FASPTAPI_SERVER_PORT = 8000
-CHOSEN_SYSTEM_MOD_VARIABLE_FILTERS = 1
+
 REDIS_CLIENT = Redis(
     host = "localhost",
     port = 6379,
     decode_responses = False,
 )
-
-
