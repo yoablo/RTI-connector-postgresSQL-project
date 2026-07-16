@@ -52,8 +52,7 @@ def save_to_database(detection: P_Tactical_Sensor_PSM_C_Detection, is_published:
 
 
 def subscriber_message(topic_enum: TopicEnum, detection: P_Tactical_Sensor_PSM_C_Detection):
-    print(
-        f"Received: {detection.A_detectionUniqueID.A_msb}, {detection.A_detectionUniqueID.A_lsb},{char_sequence_to_string(detection.A_detectionClassification.value)}")
+    log_Receiving_and_publishing("Received",detection,char_sequence_to_string(detection.A_detectionClassification.value))
     REDIS_CLIENT.rpush("latest_detection", dumps(detection))
     process_detections()
 
@@ -93,6 +92,9 @@ def process_detections():
 def log_source_ID_change(text: str,detection: P_Tactical_Sensor_PSM_C_Detection):
     print(f"!!!!! {text}: {detection.A_sourceID.A_platformId}.{detection.A_sourceID.A_systemId}.{detection.A_sourceID.A_moduleId}")
 
+def log_Receiving_and_publishing(text: str, detection: P_Tactical_Sensor_PSM_C_Detection, more_info: str):
+    print(f"{text}: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}, {more_info}")
+
 def publish(publisher: Publisher):
     print("publisher thread started")
 
@@ -102,8 +104,7 @@ def publish(publisher: Publisher):
         except Empty:
             continue
 
-        print(
-            f"publishing: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}, {detection.A_sourceID}")
+        log_Receiving_and_publishing("publishing",detection,str(detection.A_sourceID))
 
         sleep(DELAY_SECONDS)
         publisher.publish(detection)

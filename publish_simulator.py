@@ -11,6 +11,8 @@ from constants import DELAY_SECONDS, NANOSECONDS_CONVERSION_TO_SECONDS, \
     TRUELY_RANDOM_16_DIGIT_ID_START_VAR, TRUELY_RANDOM_16_DIGIT_ID_END_VAR, CHANCE_FOR_ID, Random16DigitID, \
     ClassificationName
 
+from main import log_Receiving_and_publishing
+
 
 def simulate_publish(publisher: Publisher, detection: P_Tactical_Sensor_PSM_C_Detection):
     print("Simulator thread started")
@@ -24,8 +26,7 @@ def simulate_publish(publisher: Publisher, detection: P_Tactical_Sensor_PSM_C_De
         detection.A_detectionClassification.value = string_to_char_sequence(
             choice(list(ClassificationName)).value)
 
-        print(
-            f"Simulating: {detection.A_detectionUniqueID.A_msb}, {detection.A_detectionUniqueID.A_lsb}, {char_sequence_to_string(detection.A_detectionClassification.value)}")
+        log_Receiving_and_publishing("Simulating",detection ,char_sequence_to_string(detection.A_detectionClassification.value))
 
         sleep(DELAY_SECONDS)
         publisher.publish(detection)
