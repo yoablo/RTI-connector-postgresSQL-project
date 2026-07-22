@@ -3,7 +3,7 @@ from os import getenv
 from enum import Enum
 from redis import Redis
 
-load_dotenv()
+load_dotenv(override = False)
 
 
 class ClassificationName(Enum):
@@ -42,11 +42,11 @@ DEFAULT_SYSTEM_MOD_VARIABLE = SystemStateConstants.CRITICAL_DETECTIONS.value
 DETECTION_SOURCEID_PLATFORMID = 1
 DETECTION_SOURCEID_SYSTEMID = 14
 DETECTION_SOURCEID_MODULEID = 9
-FASPTAPI_SERVER_HOST = "127.0.0.1"
-FASPTAPI_SERVER_PORT = 8000
+FASTAPI_SERVER_HOST = getenv("FASTAPI_HOST", "127.0.0.1")
+FASTAPI_SERVER_PORT = int(getenv("FASTAPI_PORT", "8000"))
 
 REDIS_CLIENT = Redis(
-    host = "localhost",
-    port = 6379,
+    host = getenv("REDIS_HOST", "localhost"),
+    port = int(getenv("REDIS_PORT", "6379")),
     decode_responses = False,
 )

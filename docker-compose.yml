@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@host.docker.internal:5432/dds_project
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+      FASTAPI_HOST: 0.0.0.0
+      FASTAPI_PORT: 8000
+
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"

@@ -2,10 +2,12 @@ from queue import Queue, Empty
 from threading import Thread
 from time import sleep
 from pickle import dumps, loads
+from loguru import logger
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
+from logger_utiles import log_source_ID_change, log_Receiving_and_publishing
 from redis_utils import get_redis_system_state
 from rticonnector.idl_types.LDM_Common import P_LDM_Common_T_Identifier
 from rticonnector.idl_types.Tactical_Sensor_PSM import P_Tactical_Sensor_PSM_C_Detection
@@ -16,8 +18,8 @@ from rticonnector.utils import char_sequence_to_string, string_to_char_sequence
 
 from publish_simulator import simulate_publish
 from constants import DELAY_SECONDS, QOS_FILE, ENGINE_STRING, DATABASE_URL, ClassificationName, REDIS_CLIENT, \
-    DETECTION_SOURCEID_PLATFORMID, DETECTION_SOURCEID_MODULEID, DETECTION_SOURCEID_SYSTEMID, FASPTAPI_SERVER_HOST, \
-    FASPTAPI_SERVER_PORT, SystemStateConstants
+    DETECTION_SOURCEID_PLATFORMID, DETECTION_SOURCEID_MODULEID, DETECTION_SOURCEID_SYSTEMID, FASTAPI_SERVER_HOST, \
+    FASTAPI_SERVER_PORT, SystemStateConstants
 from fastAPI_chrome_control_panel import app as chrome_control_panel_app
 from uvicorn import run as uvicorn_run
 from sql_classes import Base, DetectionRecord
@@ -52,7 +54,8 @@ def save_to_database(detection: P_Tactical_Sensor_PSM_C_Detection, is_published:
 
 
 def subscriber_message(topic_enum: TopicEnum, detection: P_Tactical_Sensor_PSM_C_Detection):
-    log_Receiving_and_publishing("Received",detection,char_sequence_to_string(detection.A_detectionClassification.value))
+    log_Receiving_and_publishing("Received", detection,
+                                 char_sequence_to_string(detection.A_detectionClassification.value))
     REDIS_CLIENT.rpush("latest_detection", dumps(detection))
     process_detections()
 
@@ -85,18 +88,13 @@ def process_detections():
             publish_queue.put(detection)
             is_published = True
         else:
-            log_source_ID_change("no change",detection)
+            log_source_ID_change("no change", detection)
 
         save_to_database(detection, is_published)
 
-def log_source_ID_change(text: str,detection: P_Tactical_Sensor_PSM_C_Detection):
-    print(f"!!!!! {text}: {detection.A_sourceID.A_platformId}.{detection.A_sourceID.A_systemId}.{detection.A_sourceID.A_moduleId}")
-
-def log_Receiving_and_publishing(text: str, detection: P_Tactical_Sensor_PSM_C_Detection, more_info: str):
-    print(f"{text}: {detection.A_detectionUniqueID.A_msb} , {detection.A_detectionUniqueID.A_lsb}, {more_info}")
 
 def publish(publisher: Publisher):
-    print("publisher thread started")
+    logger.info("publisher thread started")
 
     while True:
         try:
@@ -104,7 +102,7 @@ def publish(publisher: Publisher):
         except Empty:
             continue
 
-        log_Receiving_and_publishing("publishing",detection,str(detection.A_sourceID))
+        log_Receiving_and_publishing("publishing", detection, str(detection.A_sourceID))
 
         sleep(DELAY_SECONDS)
         publisher.publish(detection)
@@ -140,8 +138,8 @@ def main():
 
 
 def start_fasptAPI_control_panel():
-    uvicorn_run(chrome_control_panel_app, host = FASPTAPI_SERVER_HOST,
-                port = FASPTAPI_SERVER_PORT)
+    uvicorn_run(chrome_control_panel_app, host = FASTAPI_SERVER_HOST,
+                port = FASTAPI_SERVER_PORT)
 
 
 if __name__ == "__main__":
